@@ -4,7 +4,7 @@ import sys
 import time
 
 query = input("Enter doc query? ")
-#print("Hello, " + query + "!")
+
 
 
 from langchain.document_loaders import TextLoader
@@ -14,7 +14,7 @@ from langchain.llms import OpenAI
 from langchain.chat_models import ChatOpenAI
 from langchain.document_loaders import WebBaseLoader
 os.environ["OPENAI_API_KEY"]="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"
-
+import time
 #change 2
 #
 #query = sys.argv[1]

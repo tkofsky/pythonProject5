@@ -12,7 +12,7 @@ from langchain.document_loaders.csv_loader import CSVLoader
 from langchain.embeddings import TensorflowHubEmbeddings
 import os
 import time
-os.environ["OPENAI_API_KEY"]="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"
+os.environ["OPENAI_API_KEY"]="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"
 #https://python.langchain.com/docs/use_cases/question_answering/how_to/chat_vector_db
 ###CHANGE MODEL from gpt-3.5 to gtp-4 and see one is cheaper than the other gpt-4 is slower
 ### also change chunk size?

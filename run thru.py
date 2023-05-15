@@ -22,7 +22,7 @@ filename = 'refusaldomestic.txt'
 thehtmlfilerefused = os.path.join(htmldir, filename)
 cnt=0
 xcount = 0
-#1222290032312
+#12222900323127777
 fp = open(thehtmlfile, 'w')
 fprefused = open(thehtmlfilerefused, 'w')
 

@@ -12,7 +12,7 @@ from dateutil.relativedelta import relativedelta
 from bs4 import BeautifulSoup
 import os
 import calendar
-#####
+#####1201121212zzz99
 htmldir = 'c:\weekly tsdrtxt'
 filename = 'refusalforeign.txt'
 thehtmlfile = os.path.join(htmldir, filename)
@@ -21,8 +21,8 @@ htmldir = 'c:\weekly tsdrtxt'
 filename = 'refusaldomestic.txt'
 thehtmlfilerefused = os.path.join(htmldir, filename)
 cnt=0
-xcount = 0
-#1222290032312
+xcount = 0 ##
+#12222900323127777
 fp = open(thehtmlfile, 'w')
 fprefused = open(thehtmlfilerefused, 'w')
 

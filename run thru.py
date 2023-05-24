@@ -12,7 +12,7 @@ from dateutil.relativedelta import relativedelta
 from bs4 import BeautifulSoup
 import os
 import calendar
-#####1201121212zzz99
+#####1201121212zzz99 a
 htmldir = 'c:\weekly tsdrtxt'
 filename = 'refusalforeign.txt'
 thehtmlfile = os.path.join(htmldir, filename)

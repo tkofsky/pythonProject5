@@ -16,7 +16,7 @@ import calendar
 htmldir = 'c:\weekly tsdrtxt'
 filename = 'refusalforeign.txt'
 thehtmlfile = os.path.join(htmldir, filename)
-#new path here2
+#new path here22
 htmldir = 'c:\weekly tsdrtxt'
 filename = 'refusaldomestic.txt'
 thehtmlfilerefused = os.path.join(htmldir, filename)

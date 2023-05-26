@@ -6,7 +6,7 @@ import fitz, os
 from datetime import datetime
 from bs4 import BeautifulSoup
 
-#
+#2
 def get_text(filepath):
     text = ""
     try:

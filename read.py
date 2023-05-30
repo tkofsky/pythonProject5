@@ -5,6 +5,8 @@ import fitz,os
 import pytesseract
 from pdf2image import convert_from_path
 pytesseract.pytesseract.tesseract_cmd = "C:\\Program Files\\Tesseract-OCR\\tesseract.exe"
+pdfcount=0
+fndcount = 0
 def pdf_to_text(filepath):
     text = ""
     try:
@@ -44,7 +46,15 @@ for match in matches:
         f.write(pdfdata)
         print (match)
         text = pdf_ocr("thepdf.pdf")
+        pdfcount +=1
+        fnd = text.find('12(1)(d)')
+        if fnd!=-1:
+            rpattern = r"TMA\d+"  # Matches exactly 10 digits
+            rmatch= re.findall(rpattern, text)
+            fndcount = fndcount+len(rmatch)
+            #fndcount +=1
+            print (fndcount)
     #text = pdf_to_text("thepdf.pdf")
-    print (text)
+    print (pdfcount)
 
 

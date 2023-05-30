@@ -4,7 +4,7 @@ import PyPDF2
 import fitz,os
 import pytesseract
 from pdf2image import convert_from_path
-
+pytesseract.pytesseract.tesseract_cmd = "C:\\Program Files\\Tesseract-OCR\\tesseract.exe"
 def pdf_to_text(filepath):
     text = ""
     try:
@@ -17,7 +17,7 @@ def pdf_to_text(filepath):
     return text
 
 def pdf_ocr(pdf_path):
-    images = convert_from_path(pdf_path)
+    images = convert_from_path(pdf_path,poppler_path=r"C:\poppler\bin")
     text = ""
     for image in images:
         text += pytesseract.image_to_string(image)
@@ -42,7 +42,8 @@ for match in matches:
 
     with open("thepdf.pdf", 'wb') as f:
         f.write(pdfdata)
-        pdf_ocr("thepdf.pdf")
+        print (match)
+        text = pdf_ocr("thepdf.pdf")
     #text = pdf_to_text("thepdf.pdf")
     print (text)
 

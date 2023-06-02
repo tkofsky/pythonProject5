@@ -2,6 +2,8 @@ import requests
 import re
 import PyPDF2
 import fitz,os
+import csv
+import time
 import pytesseract
 from pdf2image import convert_from_path
 pytesseract.pytesseract.tesseract_cmd = "C:\\Program Files\\Tesseract-OCR\\tesseract.exe"
@@ -37,7 +39,8 @@ print (matches)
 
 
 for match in matches:
-
+    #match = "1710147001"
+    start_time = time.time()
     thelink = "https://madrid.wipo.int/documentaccess/documentAccess?docid="+match
     response = requests.get(thelink)
     pdfdata = response.content
@@ -50,11 +53,33 @@ for match in matches:
         fnd = text.find('12(1)(d)')
         if fnd!=-1:
             rpattern = r"TMA\d+"  # Matches exactly 10 digits
-            rmatch= re.findall(rpattern, text)
-            fndcount = fndcount+len(rmatch)
-            #fndcount +=1
-            print (fndcount)
+            rpattern = r"\d{7}"  # Matches exactly 10 digits
+            ind = text.find("Filing date and number")
+            if ind==-1:
+                ind = text.index("Date et num")
+            if ind!=-1:
+                endind = text.find("Date and signature")
+                if endind==-1:
+                    endind = text.find("Date et signature")
+                    print ('**FR')
+                if endind!=-1:
+                    segtext = text[ind:endind]
+                    rmatch= re.findall(rpattern, segtext)
+                    fndcount = fndcount+len(rmatch)
+                    if len(rmatch)!=0:
+                        ####
+
+                        ###
+                        print ('***number of matches for 7 digits is',len(rmatch))
+                        print ("total up to now",fndcount)
     #text = pdf_to_text("thepdf.pdf")
-    print (pdfcount)
+        end_time = time.time()
+        file = open('xlog4.txt', 'a')
+        xtime = end_time - start_time
+        file.write(str(len(text))+","+ str(xtime)+","+ match+"\n")
+        print (len(text),xtime,match)
+
+    print ("pdf#",pdfcount)
+
 
 

@@ -11,7 +11,7 @@ correlation_coefficient = np.corrcoef(list1, list2)[0, 1]
 # Print the correlation coefficient
 print("Correlation coefficient:", correlation_coefficient)
 
-X = np.array(list1).reshape(-2, 2)
+X = np.array(list1).reshape(-1, 1)
 y = np.array(list2)
 
 # Fit a linear regression model

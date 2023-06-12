@@ -17,7 +17,7 @@ def nonlinear_func(x, a, b, c):
 popt, pcov = curve_fit(nonlinear_func, x, y)
 
 # Generate predictions for new values of x
-x_new = np.linspace(1, 5, 100)  # Generating 100 values between 1 and 5
+x_new = np.linspace(1, 50, 100)  # Generating 100 values between 1 and 50
 y_pred = nonlinear_func(x_new, *popt)
 
 # Visualize the results

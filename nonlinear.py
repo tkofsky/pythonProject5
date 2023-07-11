@@ -7,11 +7,11 @@ x = [1, 2, 3, 4, 5]  # List of independent variable values
 y = [2.1, 4.2, 6.3, 8.4, 10.5]  # List of dependent variable values
 y = [3, 9, 27, 81,243]  # List of dependent variable values
 y = [2.4, 7.2, 21.6, 64.8,194.5]
-y = [60.4, 50.2, 150.6, 630.45,900.2]
+y = [60.4, 50.2, 150.6, 630.45,800.2]
 # Define the non-linear regression function
 def nonlinear_func(x, a, b, c):
 
-    return a * np.power(x, 2) + b * x + c
+    return a * np.power(x, 2) + b * x + c+d
 
 # Perform non-linear regression
 popt, pcov = curve_fit(nonlinear_func, x, y)

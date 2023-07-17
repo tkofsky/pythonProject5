@@ -7,7 +7,7 @@ from langchain.document_loaders import DirectoryLoader
 from langchain.indexes import VectorstoreIndexCreator
 from langchain.llms import OpenAI
 from langchain.chat_models import ChatOpenAI
-os.environ["OPENAI_API_KEY"]="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"
+os.environ["OPENAI_API_KEY"]=""
 
 #query = sys.argv[1]
 query ="what day is it"

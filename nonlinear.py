@@ -11,7 +11,7 @@ y = [60.4, 50.2, 150.6, 630.45,800.2]
 # Define the non-linear regression function
 def nonlinear_func(x, a, b, c):
 
-    return a * np.power(x, 2) + b * x + c+d
+    return a * np.power(x, 2) + b * x + c
 
 # Perform non-linear regression
 popt, pcov = curve_fit(nonlinear_func, x, y)

@@ -8,7 +8,7 @@ from langchain.document_loaders import DirectoryLoader
 from langchain.indexes import VectorstoreIndexCreator
 from langchain.llms import OpenAI
 from langchain.chat_models import ChatOpenAI
-os.environ["OPENAI_API_KEY"]="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"
+os.environ["OPENAI_API_KEY"]=""
 
 
 #

@@ -13,7 +13,7 @@ def nonlinear_func(x, a, b, c):
 
     return a * np.power(x, 2) + b * x + c
 
-# Perform non-linear regression
+# Perform non-linear regression 1
 popt, pcov = curve_fit(nonlinear_func, x, y)
 
 # Generate predictions for new values of x

@@ -1,21 +1,25 @@
 from langchain.llms import OpenAI
 import os
 import sys
+import time
 
 from langchain.document_loaders import TextLoader
 from langchain.document_loaders import DirectoryLoader
 from langchain.indexes import VectorstoreIndexCreator
 from langchain.llms import OpenAI
 from langchain.chat_models import ChatOpenAI
-os.environ["OPENAI_API_KEY"]=""
+os.environ["OPENAI_API_KEY"]="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"
+
+
 #
 #query = sys.argv[1]
-query ="what day is it today" #
+query ="what percent did home sales increase by" #
 print (query)
 loader = TextLoader('data.txt')
+time.sleep(8)
 index = VectorstoreIndexCreator().from_loaders([loader])
 
-print(index.query((query)))
+print(index.query(query,llm=ChatOpenAI()))
 
 
 

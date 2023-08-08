@@ -13,7 +13,7 @@ from langchain.indexes import VectorstoreIndexCreator
 from langchain.llms import OpenAI
 from langchain.chat_models import ChatOpenAI
 
-os.environ["OPENAI_API_KEY"]="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"
+
 
 
 #
@@ -23,7 +23,7 @@ query ="what is the birth date for Jrue Holiday " #
 print (query)
 loader = TextLoader('data.txt')
 loader = TextLoader('teams.csv')
-loader = TextLoader('3.html')
+#loader = TextLoader('3.html')
 
 
 index = VectorstoreIndexCreator().from_loaders([loader])

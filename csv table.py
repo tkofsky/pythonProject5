@@ -3,6 +3,9 @@ from bs4 import BeautifulSoup
 import pandas as pd
 import os
 
+### this extracts the table from the page https://www.basketball-reference.com/leagues/NBA_2023_standings.html
+## put each table on the page in a csv file
+
 # Function to fetch the HTML content of a URL
 def get_html_content(url):
     response = requests.get(url)

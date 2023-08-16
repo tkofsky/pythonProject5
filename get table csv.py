@@ -27,7 +27,7 @@ soup = BeautifulSoup(response.text, 'html.parser')
 #table = soup.find('table', {'class': 'Crom_table__p1iZz'})
 table = soup.find('table', {'id': 'confs_standings_E'})
 data=[]
-# Now you can iterate through the rows or do other processing with the table
+# go thru each table and get rows
 for row in table.find_all('tr'):
     columns = row.find_all('td')
     x = row.find_all('th')[0].text.strip()

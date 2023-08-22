@@ -1,7 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
 import os
-
+# function for teams
 # Function to fetch the HTML content of a URL
 def get_html_content(url):
     response = requests.get(url)

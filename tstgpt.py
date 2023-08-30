@@ -13,7 +13,7 @@ from langchain.indexes import VectorstoreIndexCreator
 from langchain.llms import OpenAI
 from langchain.chat_models import ChatOpenAI
 from langchain.document_loaders import WebBaseLoader
-
+os.environ["OPENAI_API_KEY"]=""
 
 
 #

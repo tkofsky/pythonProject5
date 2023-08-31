@@ -1,7 +1,7 @@
 from langchain.llms import OpenAI
 import os
 import sys
-import time
+
 
 query = input("Enter doc query? ")
 

@@ -53,4 +53,4 @@ if __name__ == "__main__":
 
     main_html_content = get_html_content(main_url)
     links = extract_links_from_main_page(main_html_content)
-    download_html_and_save(links, output_folder)
+

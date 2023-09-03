@@ -82,4 +82,12 @@ for movie in movies:
 
 
 #########################################
+url = 'https://www.imdb.com/chart/top/'
+
+response = requests.get(url,headers={'User-Agent': 'Mozilla/5.0'})
+soup = BeautifulSoup(response.text, 'html.parser')
+movies=soup.find_all('ul',class_='ipc-metadata-list ipc-metadata-list--dividers-between sc-3a353071-0')
+for a in ul_scripts_list.find_all('a'):
+
+    print (a.text)
 

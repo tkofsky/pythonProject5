@@ -13,7 +13,7 @@ from langchain.indexes import VectorstoreIndexCreator
 from langchain.llms import OpenAI
 from langchain.chat_models import ChatOpenAI
 from langchain.document_loaders import WebBaseLoader
-os.environ["OPENAI_API_KEY"]="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"
+os.environ["OPENAI_API_KEY"]="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"
 import time
 #change 2
 #
@@ -25,12 +25,12 @@ query ="who had more wins the Golden State Worriors or Los Angles Lakers" #
 query ="which teams have less than than 35 wins" #
 query ="which team has the most wins in the Pacific Division" #
 
-query ="how many GP does Boston have" #
+query ="how many wins (W) does Dallas" #
 
 print (query)
 filename = os.path.join("csv files", "4.csv") # csv file taken from csv table.py
-#loader = TextLoader(filename)
-loader = WebBaseLoader("https://www.tsn.ca/nhl/standings")
+loader = TextLoader(filename)
+#loader = WebBaseLoader("https://www.tsn.ca/nhl/standings")
 #loader = TextLoader('3.html')
 
 

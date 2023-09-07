@@ -2,7 +2,7 @@ import os
 from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain.embeddings import TensorflowHubEmbeddings
 from langchain.embeddings import HuggingFaceEmbeddings, SentenceTransformerEmbeddings
-os.environ["OPENAI_API_KEY"]="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"
+os.environ["OPENAI_API_KEY"]="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"
 
 ###################################Sentence Transformers Embeddings - done one CPU
 text = "This is a test query."

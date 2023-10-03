@@ -7,10 +7,12 @@ from langchain.chat_models import ChatOpenAI
 from langchain.llms  import OpenAI
 from langchain.chains import RetrievalQA
 from langchain.document_loaders import TextLoader
+from langchain.document_loaders.csv_loader import CSVLoader
+
 from langchain.embeddings import TensorflowHubEmbeddings
 import os
 import time
-os.environ["OPENAI_API_KEY"]="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"
+os.environ["OPENAI_API_KEY"]="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"
 #https://python.langchain.com/docs/use_cases/question_answering/how_to/chat_vector_db
 ###CHANGE MODEL from gpt-3.5 to gtp-4 and see one is cheaper than the other gpt-4 is slower
 ### also change chunk size?
@@ -21,14 +23,22 @@ documents = []
 
 
 
-filename = os.path.join("csv files", "1.csv") # csv file taken from csv table.py
-loader = TextLoader(filename,encoding='utf-8')
+filename = os.path.join("csv files", "organizations-3.csv") # csv file taken from csv table.py
+#filename = os.path.join("csv files", "all players.csv") # csv file taken from csv table.py
+#loader = TextLoader(filename,encoding='utf-8')
+
+#filename = os.path.join("csv files", "all players.csv") # csv file taken from csv table.py
+filename = os.path.join("csv files", "organizations-2500.csv") # csv file taken from csv table.py
+#path.join("csv files", "output.csv") # csv file taken from csv table.py
+loader = CSVLoader(filename,encoding='utf-8')
+
 documents.extend(loader.load())
 
 #text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=0)
+start_time = time.time()
 ############ SPLITTER
-chunk = 1000  # for larger file 1500 works but 1000 does not
-chunk_overlap = 30
+chunk = 1500  # for larger file 1500 works but 1000 does not
+chunk_overlap = 100
 chain_type = "stuff"  # stuff, refine works, map_reduce does not always give answer
 text_splitter = RecursiveCharacterTextSplitter(chunk_size=chunk, chunk_overlap=chunk_overlap)# working splitter
 documents = text_splitter.split_documents(documents)
@@ -40,34 +50,41 @@ embeddings = OpenAIEmbeddings()
 
 
 vectordb = Chroma.from_documents(documents, embeddings)
-retriever = vectordb.as_retriever(search_type = "similarity",search_kwargs={"k": 3})
+retriever = vectordb.as_retriever(search_type = "similarity",search_kwargs={"k": 2})
 # similarity find the most similar vector or MMR
 #https://python.langchain.com/docs/use_cases/question_answering/how_to/chat_vector_db
 
 ## error with gpt-4
 ## condense means use a more efficent model since it is small data
 
-start_time = time.time()
+
 chat_history =[]
 #query = "what is Human-caused climate change a consequence of according to the documents only based on the documents"
 query = ""
-query ="whats is the MP for Austin Reaves have"
+query ="whats is the FG% for Austin Reaves"
+query = "whats is the Number of employees that the Name Sellers-Alvarez have"
+query = "what is the Industry for Nicholson-Patel"
+query = "which has the highest number of employees"
+query = "who has the highest 3PA"
+query ="what is the age of Blake Griffin"
+query = "whats is the Number of employees that the Name Sellers-Alvarez have"
+query = "what organization has the fewest of employees"
+query = "what organization has the second most employees and how many do they have"
+#query = "according to the table what is the GHG per capita (tCO2-eq per person) for Europe"
+
+
 llm=OpenAI()
 qa = RetrievalQA.from_chain_type(llm=llm, chain_type=chain_type, retriever=retriever)
 
 llm_response = qa(query)
 print(llm_response["result"])
+total = llm_response["result"]
 
-
-#result = qa({"question": query})
-#print (result['answer'])
-
-##################################TIMER and Save LOG
 end_time = time.time()
 xtime = end_time - start_time
-xtime = round(xtime, 3)
-file = open('log with chain type', 'a')
 
-file.write(str('all docs') + "," + str(xtime)+","+chain_type+"," +str(chunk)+","+str(chunk_overlap)+"\n")
+file = open('organizations log', 'a')
+
+file.write(str('organizations-3') + "," + total+","+chain_type+"," +str(chunk)+","+str(chunk_overlap)+","+str(xtime)+"\n")
 
 ##########################NEXT CHAT#####################################

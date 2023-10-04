@@ -2,7 +2,7 @@ import os
 from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain.embeddings import TensorflowHubEmbeddings
 from langchain.embeddings import HuggingFaceEmbeddings, SentenceTransformerEmbeddings
-os.environ["OPENAI_API_KEY"]="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"
+
 import time
 import os
 ###################################Sentence Transformers Embeddings - done one CPU
@@ -14,12 +14,6 @@ text = text_file.read()
 for k in range(10):
     start_time = time.time()
     embeddings_HF = HuggingFaceEmbeddings(model_name="all-mpnet-base-v2")
-    #embeddings_tf = TensorflowHubEmbeddings()
-    embeddings = OpenAIEmbeddings(model="text-embedding-ada-002", openai_api_key="")
-
-    embeddings_tf = TensorflowHubEmbeddings()
-    #query_result = embeddings_tf.embed_query(text)
-    #embeddings = OpenAIEmbeddings(model="text-embedding-ada-002", openai_api_key="" )
 
     query_result = embeddings.embed_query(text)
 

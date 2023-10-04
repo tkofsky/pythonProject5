@@ -9,7 +9,7 @@ from langchain.llms import OpenAI
 import pandas as pd
 from langchain.document_loaders import CSVLoader
 import os
-os.environ["OPENAI_API_KEY"]="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"
+
 filename = os.path.join("csv files", "organizations-3.csv") #
 loader = CSVLoader(file_path=filename,encoding='utf-8')
 

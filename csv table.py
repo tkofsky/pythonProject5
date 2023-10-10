@@ -14,6 +14,13 @@ def get_html_content(url):
     else:
         raise Exception(f"Failed to fetch URL: {url}")
 
+def get_next(url):
+    response = requests.get(url)
+    if response.status_code == 200:
+        return response.content
+    else:
+        raise Exception(f"Failed to fetch URL: {url}")
+
 # extract tables from the main page
 def extract_tables_from_main_page(html_content):
     soup = BeautifulSoup(html_content, 'html.parser')

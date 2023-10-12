@@ -25,18 +25,17 @@ driver = webdriver.Chrome()
 #driver = webdriver.Chrome(chrome_options=options)
 driver.get('https://matrix.itasoftware.com/')
 
+#aa=driver.find_elements_by_xpath("// a[contains(text(),'One Way')]").click()
 
-elem = driver.find_element(By.XPATH,"//*[contains(text(), 'One Way)]")
-driver.find
-
+elem = driver.find_element(By.XPATH,"//*[contains(text(), 'One Way')]")
 elem.click()
 
 
-if (driver.find_elements_by_xpath("//*[contains(@id,'cityPair-org')]"))!=0:
-    depart = driver.find_element_by_xpath("//*[@id='searchPanel-0']/div/table/tbody/tr[2]/td/div/div[2]/div/div/div[2]/div/div/div/input")
+if (driver.find_element(By.XPATH,"//*[contains(@id,'cityPair-org')]"))!=0:
+    depart = driver.find_element(By.XPATH,"//*[@id='searchPanel-0']/div/table/tbody/tr[2]/td/div/div[2]/div/div/div[2]/div/div/div/input")
 
 else:
-    depart = driver.find_element_by_xpath("//*[contains(@id='cityPair-org')]")
+    depart = driver.find_element(By.XPATH,"//*[contains(@id='cityPair-org')]")
 
 
 

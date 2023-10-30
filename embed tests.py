@@ -13,7 +13,13 @@ text = text_file.read()
 
 for k in range(10):
     start_time = time.time()
-    embeddings_HF = HuggingFaceEmbeddings(model_name="all-mpnet-base-v2")
+
+    #embeddings_tf = TensorflowHubEmbeddings()
+    embeddings = OpenAIEmbeddings(model="text-embedding-ada-002", openai_api_key="")
+
+   # embeddings_tf = TensorflowHubEmbeddings()
+    #query_result = embeddings_tf.embed_query(text)
+    #embeddings = OpenAIEmbeddings(model="text-embedding-ada-002", openai_api_key="" )
 
     query_result = embeddings.embed_query(text)
 
@@ -25,7 +31,7 @@ for k in range(10):
     xtime = round(xtime, 3)
     filename = "97874480.txt"
     file = open('embed test.txt', 'a')
-    file.write(str(filename) + "," + str(xtime) + ","  + "TENSOR" + "\n")
+    file.write(str(filename) + "," + str(xtime) + ","  + "openai" + "\n")
 
 exit()
 #################################################Tensor Flow

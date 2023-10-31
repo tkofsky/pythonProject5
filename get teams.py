@@ -7,17 +7,10 @@ import csv
 import re
 import requests
 from bs4 import BeautifulSoup
-page = requests.get("https://weather.com/en-IE/weather/tenday/l/bf217d537cc1c8074ec195ce07fb74de3c1593caa6033b7c3be4645ccc5b01de")
-soup = BeautifulSoup(page.content,"lxml")
-
-d = soup.find_all('details', {'id': re.compile(r'^detailIndex')})
-
-for i in d:
-    p = i.find('summary')
-    print(list(p.stripped_strings))
 
 
-url = 'https://www.basketball-reference.com/leagues/NBA_2023_standings.html'
+
+url = 'https://nytimes.stats.com/nba/standings.asp'
 
 response = requests.get(url)
 
@@ -25,23 +18,24 @@ soup = BeautifulSoup(response.text, 'html.parser')
 
 # Find the table by its class name
 #table = soup.find('table', {'class': 'Crom_table__p1iZz'})
-table = soup.find('table', {'id': 'confs_standings_E'})
+#table = soup.find('table', {'class': 'sc-402f31e2-17 eLlqvU table-body'})
+table = soup.find('table', {'class': 'shsTable shsBorderTable'})
 data=[]
 # go thru each table and get rows
-for row in table.find_all('tr'):
+for row in table.find_all('tr',attrs={"class":"shsRow0Row"}):
     columns = row.find_all('td')
-    x = row.find_all('th')[0].text.strip()
-    teamname = x
+    #x = row.find_all('th')[0].text.strip()
+    #teamname = x
     if len(columns) > 2:
-        win = columns[0].text.strip()
-        loss = columns[1].text.strip()
-        percent= columns[2].text.strip()
-        pointpergame = columns[4].text.strip()
-        print(teamname,win,loss,percent,pointpergame)
-        data.append({'teamname':teamname,'win': win, 'loss': loss,'Points Per Game':pointpergame})
+        team = columns[0].text.strip()
+        win = columns[1].text.strip()
+        loss= columns[2].text.strip()
+        pct = columns[3].text.strip()
+        print(team,win,loss,pct)
+       # data.append({'teamname':teamname,'win': win, 'loss': loss,'PCT':PCT})
 
 df = pd.DataFrame(data)
-df.to_csv('teams.csv', index=False)
+df.to_csv('teamsx.csv', index=False)
 
 ##################################imdb
 

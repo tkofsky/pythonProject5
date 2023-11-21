@@ -2,7 +2,7 @@ import os
 from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain.embeddings import TensorflowHubEmbeddings
 from langchain.embeddings import HuggingFaceEmbeddings, SentenceTransformerEmbeddings
-os.environ["OPENAI_API_KEY"]="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"
+
 import time
 import os
 
@@ -12,16 +12,7 @@ text = text_file.read()
 
 
 
-start_time = time.time()
-embeddings = HuggingFaceEmbeddings(model_name="all-mpnet-base-v2")
-query_result = embeddings.embed_query(text)
-print(query_result)
-print(len(query_result))
-end_time = time.time()
-xtime = end_time - start_time
-xtime = round(xtime, 3)
-file = open('embed test.txt', 'a')
-file.write(str(filename) + "," + str(xtime) + ","  + "HF" + "\n")
+
 
 exit()
 #################################################Tensor Flow

@@ -11,6 +11,7 @@ from bs4 import BeautifulSoup
 
 
 url = 'https://nytimes.stats.com/nba/standings.asp'
+#url = 'https://nytimes.stats.com/nba/leaders.asp?rank=004&type=PerGame&season=reg'
 
 response = requests.get(url)
 
@@ -27,12 +28,10 @@ for row in table.find_all('tr',attrs={"class":"shsRow0Row"}):
     #x = row.find_all('th')[0].text.strip()
     #teamname = x
     if len(columns) > 2:
-        team = columns[0].text.strip()
-        win = columns[1].text.strip()
-        loss= columns[2].text.strip()
-        pct = columns[3].text.strip()
+
+
         print(team,win,loss,pct)
-       # data.append({'teamname':teamname,'win': win, 'loss': loss,'PCT':PCT})
+        data.append({'teamname':team,'win': win, 'loss': loss,'PCT':pct})
 
 df = pd.DataFrame(data)
 df.to_csv('teamsx.csv', index=False)

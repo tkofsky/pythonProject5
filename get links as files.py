@@ -20,7 +20,7 @@ def extract_links_from_main_page(html_content):
 
     return links
 
-# Function to download HTML content and save to separate files
+#  save to other files
 def download_html_and_save(links, output_folder):
     count = 1
     for link in links:
@@ -32,11 +32,11 @@ def download_html_and_save(links, output_folder):
                 html_content = get_html_content(link)
                 soup = BeautifulSoup(html_content, 'html.parser')
 
-                # Generate a filename based on the link count
+
                 filename = os.path.join("htmlfiles", f"{count}.html")
                 count += 1
 
-                # Write the HTML content to a separate file
+
                 with open(filename, 'w', encoding='utf-8') as file:
                     file.write(soup.prettify())
 

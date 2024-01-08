@@ -22,13 +22,16 @@ soup = BeautifulSoup(response.text, 'html.parser')
 #table = soup.find('table', {'class': 'sc-402f31e2-17 eLlqvU table-body'})
 table = soup.find('table', {'class': 'shsTable shsBorderTable'})
 data=[]
-# go thru each table and get rows
+# ru thru rows
 for row in table.find_all('tr',attrs={"class":"shsRow0Row"}):
     columns = row.find_all('td')
     #x = row.find_all('th')[0].text.strip()
     #teamname = x
     if len(columns) > 2:
-
+        team = columns[0].text.strip()
+        win = columns[1].text.strip()
+        loss= columns[2].text.strip()
+        pct = columns[3].text.strip()
 
         print(team,win,loss,pct)
         data.append({'teamname':team,'win': win, 'loss': loss,'PCT':pct})

@@ -2,7 +2,7 @@ import os
 from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain.embeddings import TensorflowHubEmbeddings
 from langchain.embeddings import HuggingFaceEmbeddings, SentenceTransformerEmbeddings
-
+os.environ["OPENAI_API_KEY"]="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"
 import time
 import os
 ###################################Sentence Transformers Embeddings - done one CPU
@@ -13,9 +13,9 @@ text = text_file.read()
 
 for k in range(10):
     start_time = time.time()
-
+    embeddings_HF = HuggingFaceEmbeddings(model_name="all-mpnet-base-v2")
     #embeddings_tf = TensorflowHubEmbeddings()
-    embeddings = OpenAIEmbeddings(model="text-embedding-ada-002", openai_api_key="")
+    #embeddings = OpenAIEmbeddings(model="text-embedding-ada-002", openai_api_key="")
 
    # embeddings_tf = TensorflowHubEmbeddings()
     #query_result = embeddings_tf.embed_query(text)
@@ -33,7 +33,7 @@ for k in range(10):
     file = open('embed test.txt', 'a')
     file.write(str(filename) + "," + str(xtime) + ","  + "openai" + "\n")
 
-exit()
+#exit()
 #################################################Tensor Flow
 #text = "This is a test query."
 embeddings_tf = TensorflowHubEmbeddings()

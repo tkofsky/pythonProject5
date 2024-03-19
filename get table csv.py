@@ -7,7 +7,7 @@ import csv
 import re
 import requests
 from bs4 import BeautifulSoup
-page = requests.get("https://weather.com/en-IE/weather/tenday/l/bf217d537cc1c8074ec195ce07fb74de3c1593caa6033b7c3be4645ccc5b01de")
+
 soup = BeautifulSoup(page.content,"lxml")
 
 d = soup.find_all('details', {'id': re.compile(r'^detailIndex')})
@@ -29,14 +29,14 @@ table = soup.find('table', {'id': 'confs_standings_E'})
 data=[]
 # go thru each table and get rows
 for row in table.find_all('tr'):
-    columns = row.find_all('td')
+    cols = row.find_all('td')
     x = row.find_all('th')[0].text.strip()
     teamname = x
-    if len(columns) > 2:
-        win = columns[0].text.strip()
-        loss = columns[1].text.strip()
-        percent= columns[2].text.strip()
-        pointpergame = columns[4].text.strip()
+    if len(cols) > 2:
+        win = cols[0].text.strip()
+        loss = cols[1].text.strip()
+        percent= cols[2].text.strip()
+        pointpergame = cols[4].text.strip()
         print(teamname,win,loss,percent,pointpergame)
         data.append({'teamname':teamname,'win': win, 'loss': loss,'Points Per Game':pointpergame})
 

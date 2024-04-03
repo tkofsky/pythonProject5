@@ -2,24 +2,13 @@ import requests
 from bs4 import BeautifulSoup
 import pandas as pd
 import os
-
+#https://www.google.com/search?q=nba+standings&rlz=1C1RXQR_enCA932CA932&oq=nba+standings&gs_lcrp=EgZjaHJvbWUqDQgAEAAYgwEYsQMYgAQyDQgAEAAYgwEYsQMYgAQyBggBEAAYAzINCAIQABiDARixAxiABDINCAMQABiDARixAxiABDINCAQQABiDARixAxiABDINCAUQABiDARixAxiABDIGCAYQRRg8MgYIBxBFGDzSAQgxNTk5ajBqN6gCALACAA&sourceid=chrome&ie=UTF-8#sie=lg;/g/11snv1vp6v;3;/m/05jvx;st;fp;1;;;
 ### this extracts the table from the page https://www.basketball-reference.com/leagues/NBA_2023_standings.html
 ## put each table on the page in a csv file
 
-# Function to fetch the HTML content of a URL
-def get_html_content(url):
-    response = requests.get(url)
-    if response.status_code == 200:
-        return response.content
-    else:
-        raise Exception(f"Failed to fetch URL: {url}")
 
-def get_next(url):
-    response = requests.get(url)
-    if response.status_code == 200:
-        return response.content
-    else:
-        raise Exception(f"Failed to fetch URL: {url}")
+
+
 
 # extract tables from the main page
 def extract_tables_from_main_page(html_content):

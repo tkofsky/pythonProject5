@@ -17,7 +17,7 @@ from langchain.document_loaders import WebBaseLoader
 import time
 #change 2
 #
-query = sys.argv[1]
+#query = sys.argv[1]
 query ="what team has the most Points Per Game" #
 query ="how many wins do the Boston Celtics Have" #
 query ="how many losses to the Golden State Worriors have" #
@@ -25,7 +25,7 @@ query ="who had more wins the Golden State Worriors or Los Angles Lakers" #
 query ="which teams have less than than 35 wins" #
 query ="which team has the most wins in the Pacific Division" #
 
-query ="how many loses (L) does Dallas" #
+
  #
 
 print (query)

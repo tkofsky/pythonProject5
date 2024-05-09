@@ -2,11 +2,11 @@ import os
 from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain.embeddings import TensorflowHubEmbeddings
 from langchain.embeddings import HuggingFaceEmbeddings, SentenceTransformerEmbeddings
-os.environ["OPENAI_API_KEY"]="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"
+
 import time
 import os
 
-filename = "97874480.txt"
+filename = "97874480.txt"  #qwqw
 text_file = open(filename, "r",encoding='utf-8')
 text = text_file.read()
 

@@ -2,7 +2,7 @@ import os
 from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain.embeddings import TensorflowHubEmbeddings
 from langchain.embeddings import HuggingFaceEmbeddings, SentenceTransformerEmbeddings
-
+os.environ["OPENAI_API_KEY"]="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"
 import time
 import os
 
@@ -33,7 +33,7 @@ print(len(query_result))
 
 ###################################################OPENAI
 embeddings = OpenAIEmbeddings(
-    model="BAAI/bge-small-en-v1.5",
+    model="text-embedding-ada-002",
     openai_api_key=""
 )
 #text = "This is a test query.OpenAI uses 1,536 dimensions for embeddings in the text-embedding-ada-002 model due to multiple design choices driven by the trade-offs between model complexity, computational efficiency, and predictive performance. 1. Model complexity: Higher-dimensional embeddings can capture more complex and nuanced relationships in the data. This allows the model to better understand and represent various linguistic patterns, syntactic properties, and semantic relationships. 2. Computational efficiency: Though higher-dimensional embeddings provide richer"

@@ -6,7 +6,7 @@ import os
 ### this extracts the table from the page https://www.basketball-reference.com/leagues/NBA_2023_standings.html
 ## put each table on the page in a csv file
 
-# Function to fetch the HTML content of a URL 33 1 werwer
+# Function to fetch the HTML content of a URL 33 1 werwer 434324
 def get_html_content(url):
     response = requests.get(url)
     if response.status_code == 200:

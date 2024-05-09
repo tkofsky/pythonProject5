@@ -5,7 +5,7 @@ from langchain.embeddings import HuggingFaceEmbeddings, SentenceTransformerEmbed
 
 import time
 import os
-###################################Sentence Transformers Embeddings - done one CPU
+###################################Sentence Transformers Embeddings - done one CPU qqqqq
 #text = "This is a test query.werwerwere"
 text_file = open("97874480.txt", "r",encoding='utf-8')
 text = text_file.read()

@@ -14,7 +14,7 @@ from langchain.llms import OpenAI
 from langchain.chat_models import ChatOpenAI
 
 from langchain.document_loaders import WebBaseLoader
-#os.environ["OPENAI_API_KEY"]="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"
+
 os.environ["OPENAI_API_KEY"]=OPENAI_API_KEY
 import time
 

@@ -10,7 +10,7 @@ print (os.getenv("OPENAI_API_KEY"))
 query = input("Enter doc query? ")
 #OPENAI_API_KEY= os.getenv("OPENAI_API_KEY")
 openai.api_key = os.getenv("OPENAI_API_KEY")
-#print ("!!!!",OPENAI_API_KEY)
+
 
 from langchain.document_loaders import TextLoader
 from langchain.document_loaders import DirectoryLoader

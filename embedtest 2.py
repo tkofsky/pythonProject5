@@ -6,7 +6,7 @@ from langchain.embeddings import HuggingFaceEmbeddings, SentenceTransformerEmbed
 import time
 import os
 
-filename = "97874480.txt"  #qwqw
+filename = "97874480.txt"  #qwqw22323
 text_file = open(filename, "r",encoding='utf-8')
 text = text_file.read()
 

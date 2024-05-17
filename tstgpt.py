@@ -38,7 +38,7 @@ query = "who had more wins the Golden State Worriors or Los Angles Lakers"  #
 query = "which teams have less than than 35 wins"  #
 query = "which team has the most wins in the Pacific Division"  #
 
-query = "how many loses (L) does Dallas"  #
+
 #
 
 print(query)

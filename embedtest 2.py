@@ -10,7 +10,7 @@ filename = "97874480.txt"  #qwqw22323
 text_file = open(filename, "r",encoding='utf-8')
 text = text_file.read()
 
-
+#new files
 
 start_time = time.time()
 embeddings = HuggingFaceEmbeddings(model_name="all-mpnet-base-v2")

@@ -11,7 +11,7 @@ query = input("Enter doc query? ")
 #OPENAI_API_KEY= os.getenv("OPENAI_API_KEY")
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
-#1212
+#121212121
 from langchain.document_loaders import TextLoader
 from langchain.document_loaders import DirectoryLoader
 from langchain.indexes import VectorstoreIndexCreator

@@ -39,7 +39,7 @@ query = "which teams have less than than 35 wins"  #
 query = "which team has the most wins in the Pacific Division"  #
 
 
-#
+#3432434
 
 print(query)
 filename = os.path.join("csv files", "2.csv")  # csv file taken from csv table.py

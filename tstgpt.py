@@ -36,7 +36,7 @@ query = "how many wins do the Boston Celtics Have"  #
 query = "how many losses to the Golden State Worriors have"  #
 query = "who had more wins the Golden State Worriors or Los Angles Lakers"  #
 query = "which teams have less than than 35 wins"  #
-query = "which team has the most wins in the Pacific Division"  #
+
 
 
 #3432434

@@ -37,7 +37,7 @@ def download_html_and_save(links, output_folder):
                 count += 1
 
 
-                with open(filename, 'w', encoding='utf-8') as file:
+                with open(filename, '', encoding='utf-8') as file:
                     file.write(soup.prettify())
 
                 print(f"Downloaded: {link}")
@@ -51,6 +51,4 @@ if __name__ == "__main__":
     if not os.path.exists(output_folder):
         os.makedirs(output_folder)
 
-    main_html_content = get_html_content(main_url)
-    links = extract_links_from_main_page(main_html_content)
-    download_html_and_save(links, output_folder)
+

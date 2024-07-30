@@ -69,7 +69,7 @@ else:
 
 
 depart.click()
-depart.send_keys("lax")
+depart.send_keys("dwf")
 
 elem = driver.find_element_by_xpath("//*[contains(text(), 'One-way')]")
 elem.click()

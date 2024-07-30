@@ -38,7 +38,7 @@ def download_html_and_save(links, output_folder):
 
 
                 with open(filename, 'w', encoding='utf-8') as file:
-                    file.write(soup.prettify())
+                    file.write(soup)
 
                 print(f"Downloaded: {link}")
             except Exception as e:

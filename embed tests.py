@@ -11,7 +11,7 @@ text_file = open("97874480.txt", "r",encoding='utf-8')
 text = text_file.read()
 
 
-for k in range(100):
+for k in range(20):
     start_time = time.time()
     embeddings_HF = HuggingFaceEmbeddings(model_name="all-mpnet-base-v2")
     #embeddings_tf = TensorflowHubEmbeddings()

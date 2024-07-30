@@ -41,7 +41,7 @@ query_result = embeddings.embed_query(text)
 print(query_result)
 print(len(query_result))
 
-#documents - loaded from local
+documents = ["This is a sample document.", "This is another sample document."]
 
 document_embeddings = embeddings.embed_documents(texts=documents, chunk_size=1000)
 print(document_embeddings)

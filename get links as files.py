@@ -38,7 +38,7 @@ def download_html_and_save(links, output_folder):
 
 
                 with open(filename, 'w', encoding='utf-8') as file:
-                    file.write(soup)
+                    file.write(soup.prettify())
 
                 print(f"Downloaded: {link}")
             except Exception as e:
@@ -52,5 +52,5 @@ if __name__ == "__main__":
         os.makedirs(output_folder)
 
     main_html_content = get_html_content(main_url)
-    links = extract_links_from_main_page(main_html_content)
+
     download_html_and_save(links, output_folder)

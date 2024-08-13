@@ -7,7 +7,7 @@ import time
 import os
 ###################################Sentence Transformers Embeddings - done one CPU qqqqqaaaaaa
 #text = "This is a test query.werwerwere"
-text_file = open("97874480.txt", "r",encoding='utf-8')
+text_file = open("97874481.txt", "r",encoding='utf-8')
 text = text_file.read()
 
 
@@ -21,7 +21,7 @@ for k in range(10):
     #query_result = embeddings_tf.embed_query(text)
     #embeddings = OpenAIEmbeddings(model="text-embedding-ada-002", openai_api_key="" )
 
-    query_result = embeddings_hf.embed_query(text)
+    query_result = embeddings.embed_query(text)
 
     print(query_result)
     print(len(query_result))

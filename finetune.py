@@ -121,7 +121,7 @@ for text in text_list:
 # Not a fan, don't recommed. - Negative
 # Better than the first one. - Negative
 # This is not worth watching even once. - Negative
-# This one is a pass. - Negative
+# This one is a pass. - Negative need to see
 
 peft_config = LoraConfig(task_type="SEQ_CLS", # sequence classification
                         r=4, # intrinsic rank of trainable weight matrix

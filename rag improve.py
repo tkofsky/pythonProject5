@@ -62,7 +62,8 @@ prompt = qa_template.format(context_str="\n\n".join(context_list), query_str=que
 
 # Generate the response
 response = gpt3.complete(prompt)
-print(str(response))
+print ("first response -------")
+print(str(response),"first response")
 
 
 # modify default values of chunk size and chunk overlap
@@ -78,6 +79,7 @@ query_engine = index.as_query_engine(similarity_top_k=4)
 
 ####response = query_engine.query("What is the plot of the film that led Emma Stone to win her first Academy Award?")
 response = query_engine.query("Compare the families of Emma Stone and Ryan Gosling")
+print ("second response -------")
 print(response)
 
 
@@ -89,7 +91,7 @@ query = "Compare the families of Emma Stone and Ryan Gosling"
 nodes = retriever.retrieve(query)
 # Print the chunks
 for node in nodes:
-    print('----------------------------------------------------')
+    print('------LIST OF NODES----------------------------------------------')
     print (node)#####display_source_node(node, source_length = 500)
 
 
@@ -108,7 +110,7 @@ reranker = FlagEmbeddingReranker(
 query_bundle = QueryBundle(query_str=query)
 ranked_nodes = reranker._postprocess_nodes(nodes, query_bundle = query_bundle)
 for ranked_node in ranked_nodes:
-    print('----------------------------------------------------')
+    print('--------LIST OF RANKED NODES--------------------------------------------')
     print(ranked_node)
 ################################
 
@@ -120,5 +122,21 @@ query_engine = index.as_query_engine(
 
 # Print the response from the model
 response = query_engine.query("Compare the families of Emma Stone and Ryan Gosling")
-
+print ("___________AFTER RE-RANKING_____________________________________________________")
 print(response)
+
+############################################
+from llama_index.postprocessor.rankgpt_rerank import RankGPTRerank
+# Re-Rank the top 3 chunks based on the gpt-3.5-turbo-0125 model
+reranker = RankGPTRerank(
+    top_n = 3,
+    llm = openai.OpenAI(model="gpt-3.5-turbo-0125"),
+)
+# Display the top 3 chunks based on RankGPT
+query_bundle = QueryBundle(query_str=query)
+ranked_nodes = reranker._postprocess_nodes(nodes, query_bundle = query_bundle)
+print ("-----------------USING RankGPTRerank")
+for ranked_node in ranked_nodes:
+    print('----------------------------------------------------')
+    print (ranked_node)
+

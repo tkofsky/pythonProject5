@@ -14,7 +14,7 @@ from llama_index.core import (VectorStoreIndex,ServiceContext, download_loader)
 
 import llama_index.core
 
-
+HF_TOKEN = "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"
 import pip
 #pip.main(['install',"git+https://github.com/FlagOpen/FlagEmbedding.git"])
 
@@ -103,7 +103,7 @@ from llama_index.postprocessor.flag_embedding_reranker import FlagEmbeddingReran
 from llama_index.core.schema import QueryBundle
 # Re-Rank chunks based on the bge-reranker-base-model
 reranker = FlagEmbeddingReranker(
-    top_n = 3,
+    top_n = 7,
     model = "BAAI/bge-reranker-base",
 )
 # Return the updated chunks
@@ -140,3 +140,24 @@ for ranked_node in ranked_nodes:
     print('----------------------------------------------------')
     print (ranked_node)
 
+
+from llama_index.core.query_engine import MultiStepQueryEngine
+from llama_index.core.indices.query.query_transform.base import (
+    StepDecomposeQueryTransform,
+)
+
+
+print ("--------------MULTI STEP---------------") # see also https://docs.llamaindex.ai/en/stable/examples/query_transformations/SimpleIndexDemo-multistep/
+# Multi-step query setup
+step_decompose_transform_gpt3 = StepDecomposeQueryTransform(gpt3, verbose=True)
+index_summary = "Breaks down the initial query"
+# Return query engine for the index
+multi_step_query_engine = MultiStepQueryEngine(
+    query_engine=query_engine,
+    query_transform=step_decompose_transform_gpt3,
+    index_summary=index_summary
+)
+
+# print the response from the model
+response = multi_step_query_engine.query("Compare the families of Emma Stone and Ryan Gosling")
+print (response)

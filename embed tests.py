@@ -7,7 +7,7 @@ import time
 import os
 ###################################Sentence Transformers Embeddings - done one CPU qqqqqaaaaaa
 #text = "This is a test query.werwerwere"
-text_file = open("97874481.txt", "r",encoding='utf-8')
+text_file = open("97874480.txt", "r",encoding='utf-8')
 text = text_file.read()
 
 

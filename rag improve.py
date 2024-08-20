@@ -103,7 +103,7 @@ from llama_index.postprocessor.flag_embedding_reranker import FlagEmbeddingReran
 from llama_index.core.schema import QueryBundle
 # Re-Rank chunks based on the bge-reranker-base-model
 reranker = FlagEmbeddingReranker(
-    top_n = 7,
+    top_n = 3,
     model = "BAAI/bge-reranker-base",
 )
 # Return the updated chunks

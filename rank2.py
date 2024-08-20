@@ -9,7 +9,7 @@ from sentence_transformers import CrossEncoder
 
 
 loader = PyPDFLoader("./Document/Harry Potter and the Sorcerers Stone.pdf")
-
+pages = loader.load_and_split()
 
 
 text_splitter = RecursiveCharacterTextSplitter.from_huggingface_tokenizer(

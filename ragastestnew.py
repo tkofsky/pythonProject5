@@ -10,7 +10,7 @@ data_samples = {
     ],
     'answer': [
         'The first superbowl was held on Jan 15, 1967',
-        'The most super bowls have been won by The New England wqwqwqwq'
+        'The most super bowls have been won by The New England patriots five times'
     ],
     'contexts': [
         [
@@ -22,8 +22,8 @@ data_samples = {
         ]
     ],
     'ground_truth': [
-        'The first superbowl was held on January 15, 1969',
-        'The New England Patriots have won the Super Bowl a record five times'
+        'The first superbowl was held on January 15, 1967',
+        'The New york Giants have won the Super Bowl a record five times'
     ]
 }
 

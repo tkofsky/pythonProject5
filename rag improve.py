@@ -14,7 +14,7 @@ from llama_index.core import (VectorStoreIndex,ServiceContext, download_loader)
 
 import llama_index.core
 
-
+HF_TOKEN = "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"
 import pip
 #pip.main(['install',"git+https://github.com/FlagOpen/FlagEmbedding.git"])
 

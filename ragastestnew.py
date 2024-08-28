@@ -10,7 +10,7 @@ data_samples = {
     ],
     'answer': [
         'The first superbowl was held on Jan 15, 1967',
-        'The most super bowls have been won by The New England Patriots'
+        'The most super bowls have been won by The New England wqwqwqwq'
     ],
     'contexts': [
         [
@@ -31,4 +31,4 @@ dataset = Dataset.from_dict(data_samples)
 
 score = evaluate(dataset, metrics=[faithfulness, answer_correctness])
 df = score.to_pandas()
-df.to_csv('score.csv')
+df.to_csv('score.csv', index=False)

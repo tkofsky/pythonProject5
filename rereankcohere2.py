@@ -16,6 +16,8 @@ from langchain.retrievers.document_compressors import CohereRerank
 os.environ["COHERE_API_KEY"] = getpass("Cohere API Key:")
 
 
+OPENAI_API_KEY= os.environ.get("OPENAI_API_KEY")
+#https://medium.aiplanet.com/advanced-rag-cohere-re-ranker-99acc941601c
 def pretty_print_docs(docs):
     print(
         f"\n{'-' * 100}\n".join(
@@ -64,9 +66,7 @@ import time
 start = time.time()
 start_time = time.process_time()
 print(qa.run(query=query))
-end = time.time()
-end_time = time.process_time()
-print(f"CPU time used: {end_time - start_time} seconds")
+
 print(end - start)
 
 compressor = CohereRerank()

@@ -15,8 +15,10 @@ from langchain.retrievers import ContextualCompressionRetriever
 from langchain.retrievers.document_compressors import CohereRerank
 os.environ["COHERE_API_KEY"] = getpass("Cohere API Key:")
 
-
+COHERE_API_KEY = "1ODOOnJTr2xY7ncwJP0f54wZaA8o5AmB9hJQmHq7"
 OPENAI_API_KEY= os.environ.get("OPENAI_API_KEY")
+# run in debug mode
+
 #https://medium.aiplanet.com/advanced-rag-cohere-re-ranker-99acc941601c
 def pretty_print_docs(docs):
     print(
@@ -55,7 +57,7 @@ docs = retriever.get_relevant_documents(query)
 pretty_print_docs(docs)
 
 #
-llm = ChatOpenAI(model_name="gpt-3.5-turbo-16k",temperature=0.1)
+llm = ChatOpenAI(model_name="gpt-4o-mini",temperature=0.1)
 #
 qa = RetrievalQA.from_chain_type(llm=llm,
                                  chain_type="stuff",
@@ -66,7 +68,9 @@ import time
 start = time.time()
 start_time = time.process_time()
 print(qa.run(query=query))
-
+end = time.time()
+end_time = time.process_time()
+print(f"CPU time used: {end_time - start_time} seconds")
 print(end - start)
 
 compressor = CohereRerank()

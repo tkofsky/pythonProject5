@@ -15,7 +15,7 @@ from langchain.retrievers import ContextualCompressionRetriever
 from langchain.retrievers.document_compressors import CohereRerank
 os.environ["COHERE_API_KEY"] = getpass("Cohere API Key:")
 
-COHERE_API_KEY = "1ODOOnJTr2xY7ncwJP0f54wZaA8o5AmB9hJQmHq7"
+
 OPENAI_API_KEY= os.environ.get("OPENAI_API_KEY")
 # run in debug mode
 

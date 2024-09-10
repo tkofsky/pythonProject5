@@ -28,7 +28,7 @@ splitter = RecursiveCharacterTextSplitter(chunk_size=512,
 chunks = splitter.split_documents(docs)
 
 embeddings = HuggingFaceInferenceAPIEmbeddings(
-    api_key='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', model_name="BAAI/bge-base-en-v1.5"
+    api_key='', model_name="BAAI/bge-base-en-v1.5"
 )
 vectorstore = FAISS.from_documents(chunks, embeddings)
 

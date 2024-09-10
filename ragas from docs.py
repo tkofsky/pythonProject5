@@ -4,8 +4,8 @@ from ragas import evaluate
 # Sample Testing Data
 test_set = [
     {"question": "What is the capital of France?", "generated_answer": "Paris", "expected_answer": "Paris"},
-    {"question": "Who wrote '1984'?", "generated_answer": "George Orwell", "expected_answer": "George Orwell"}
-
+    {"question": "Who wrote '1984'?", "generated_answer": "George Orwell", "expected_answer": "George Orwell"},
+    {"question": "What is the largest planet in the solar system?", "generated_answer": "Jupiter", "expected_answer": "Jupiter"}
 ]
 
 # Convert the test set into a DataFrame
@@ -21,4 +21,4 @@ print(df)
 results = evaluate(df)
 
 # Display the results
-print(results)
+

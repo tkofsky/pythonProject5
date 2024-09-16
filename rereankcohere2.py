@@ -14,12 +14,13 @@ from langchain.chat_models import ChatOpenAI
 from langchain.retrievers import ContextualCompressionRetriever
 from langchain.retrievers.document_compressors import CohereRerank
 os.environ["COHERE_API_KEY"] = getpass("Cohere API Key:")
-
-
+from langchain.retrievers import BM25Retriever, EnsembleRetriever
+COHERE_API_KEY = "1ODOOnJTr2xY7ncwJP0f54wZaA8o5AmB9hJQmHq7"
 OPENAI_API_KEY= os.environ.get("OPENAI_API_KEY")
 # run in debug mode
 
 #https://medium.aiplanet.com/advanced-rag-cohere-re-ranker-99acc941601c
+#Note : Here we can see that the processing time of the response generation has come down to 2.42 seconds from 3.15 seconds when the reranking was not applied.
 def pretty_print_docs(docs):
     print(
         f"\n{'-' * 100}\n".join(
@@ -72,7 +73,7 @@ end = time.time()
 end_time = time.process_time()
 print(f"CPU time used: {end_time - start_time} seconds")
 print(end - start)
-
+####################### first withour reranker then (next) with reranker
 compressor = CohereRerank()
 compression_retriever = ContextualCompressionRetriever(
     base_compressor=compressor, base_retriever=retriever

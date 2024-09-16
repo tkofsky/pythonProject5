@@ -6,7 +6,7 @@ from llama_index.core import VectorStoreIndex
 
 scrapfly_reader = ScrapflyReader(
     api_key="Your Scrapfly API key",
-
+    ignore_scrape_failures=True,
 )
 
 # Load documents from URLs as markdown

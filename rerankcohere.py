@@ -73,7 +73,7 @@ for hit in results.results:
     print(email)
 
 # Now we ask for the pricing from Oracle
-
+query = "Which pricing did we get from MS?"
 
 # Call rerank, pass in the query, docs, and the rank_fields. Set the model to 'rerank-english-v3.0' or 'rerank-multilingual-v3.0'
 results = co.rerank(query=query, documents=emails, top_n=2, model='rerank-english-v3.0', rank_fields=rank_fields)

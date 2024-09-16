@@ -14,7 +14,7 @@ import os
 from getpass import getpass
 #https://medium.com/@nadikapoudel16/advanced-rag-implementation-using-hybrid-search-reranking-with-zephyr-alpha-llm-4340b55fef22
 HF_token = getpass()
-
+os.environ['HUGGINGFACEHUB_API_TOKEN'] = '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'
 
 pdf_folder_path = "./"
 loader = PyPDFDirectoryLoader(pdf_folder_path)
@@ -42,7 +42,7 @@ embeddings = HuggingFaceBgeEmbeddings(
 
 vectorstore = FAISS.from_documents(text_splits, embeddings)
 
-retriever_vectordb = vectorstore.as_retriever(search_kwargs={"body_search": "school"})   ## use keywords as hybrid
+#retriever_vectordb = vectorstore.as_retriever(search_kwargs={"body_search": "school"})
 retriever_vectordb = vectorstore.as_retriever(search_kwargs={"k": 5},)
 keyword_retriever = BM25Retriever.from_documents(text_splits)
 keyword_retriever.k =  5

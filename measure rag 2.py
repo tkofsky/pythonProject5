@@ -30,9 +30,7 @@ urls = [
 
 # collect data using selenium url loader
 loader = SeleniumURLLoader(urls=urls)
-
-#documents = loader.load()
-documents = ["This is a sample document.", "This is another sample document."]
+documents = loader.load()
 openai.api_key = os.getenv("OPENAI_API_KEY")
 ####################################
 #from google.colab import userdata

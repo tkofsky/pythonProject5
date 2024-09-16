@@ -21,4 +21,4 @@ print(df)
 results = evaluate(df)
 
 # Display the results
-
+print(results)

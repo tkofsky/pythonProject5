@@ -4,7 +4,7 @@ from deepeval.test_case import LLMTestCase
 import asyncio
 
 # Replace this with the actual output from your LLM application
-
+actual_output = "We offer a 30-day full refund at no extra cost."
 
 # Replace this with the expected output from your RAG generator
 expected_output = "You are eligible for a 30 day full refund at no extra cost."

@@ -23,7 +23,7 @@ data_samples = {
     ],
     'ground_truth': [
         'The first superbowl was held on January 15, 1967',
-        'The New york Giants have won the Super Bowl a record five times'
+        'The New york The New England patriots won the Super Bowl a record five times'
     ]
 }
 

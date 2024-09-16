@@ -28,7 +28,9 @@ urls = [
     "https://www.birdlife.org/birds/penguins/#:~:text=The%20threats%20are%20numerous%2C%20including,is%20melting%20before%20their%20eyes."
 ]
 
-
+# collect data using selenium url loader
+loader = SeleniumURLLoader(urls=urls)
+documents = loader.load()
 
 documentList = []
 for doc in documents:

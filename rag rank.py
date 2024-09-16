@@ -25,7 +25,7 @@ import sentence_transformers
 ###############################
 
 
-pages = WikipediaLoader(query="Harry Potter", load_max_docs=2, lang="en").load()
+pages = WikipediaLoader(query="Harry Potter", load_max_docs=3, lang="en").load()
 
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 

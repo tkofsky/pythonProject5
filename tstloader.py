@@ -12,7 +12,7 @@ nest_asyncio.apply()
 api_key = os.getenv("OPENAI_API_KEY")
 
 
-loader = WebBaseLoader(["https://www.espn.com/", "https://google.com"])
+loader = WebBaseLoader(["https://www.espn.com/", "https://www.apple.com"])
 loader.requests_per_second = 1
 docs = loader.aload()
 

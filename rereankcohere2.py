@@ -51,7 +51,7 @@ embeddings = HuggingFaceBgeEmbeddings(
 )
 
 vectorstore = FAISS.from_documents(texts, embeddings)
-retriever = vectorstore.as_retriever(search_kwargs={"k": 20})
+retriever = vectorstore.as_retriever(search_kwargs={"k": 15})
 
 query = "According to Kelly and Williams what is ethics?"
 docs = retriever.get_relevant_documents(query)

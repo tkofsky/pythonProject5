@@ -15,7 +15,7 @@ from langchain.retrievers import ContextualCompressionRetriever
 from langchain.retrievers.document_compressors import CohereRerank
 os.environ["COHERE_API_KEY"] = getpass("Cohere API Key:")
 from langchain.retrievers import BM25Retriever, EnsembleRetriever
-COHERE_API_KEY = "1ODOOnJTr2xY7ncwJP0f54wZaA8o5AmB9hJQmHq7"
+
 OPENAI_API_KEY= os.environ.get("OPENAI_API_KEY")
 # run in debug mode
 
@@ -35,7 +35,7 @@ print(len(docs))
 #
 print(docs[1].page_content)
 
-text_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=100)
+text_splitter = RecursiveCharacterTextSplitter(chunk_size=600, chunk_overlap=100)
 texts = text_splitter.split_documents(docs)
 print(len(texts))
 

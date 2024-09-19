@@ -1,18 +1,18 @@
 import csv
-import time  # Import the time module
+import time
 from bs4 import BeautifulSoup
 from sentence_transformers import SentenceTransformer, util
 import openai
 import requests
 import numpy as np
 import re
+from concurrent.futures import ThreadPoolExecutor  # For parallel processing
 import os
 # Set your OpenAI API key
 OPENAI_API_KEY= os.environ.get("OPENAI_API_KEY")
 
 # Load a Sentence Transformer model fine-tuned for question answering
 model = SentenceTransformer('sentence-transformers/msmarco-distilbert-base-v4')  # QA-focused model
-
 
 def load_webpage_content(url):
     """
@@ -26,14 +26,8 @@ def load_webpage_content(url):
 
         # Extract content from paragraphs, list items, and table data cells
         content = []
-
-        # Extract text from paragraphs
         content.extend([p.get_text() for p in soup.find_all('p')])
-
-        # Extract text from list items, which may contain relevant data
         content.extend([li.get_text() for li in soup.find_all('li')])
-
-        # Extract text from table cells, particularly useful for infobox data
         content.extend([td.get_text() for td in soup.find_all('td')])
 
         # Join all content into a single string
@@ -41,7 +35,6 @@ def load_webpage_content(url):
     except Exception as e:
         print(f"An error occurred while loading the web page: {e}")
         return ""
-
 
 def split_text_by_sentences(text, max_length=1000):
     """
@@ -63,7 +56,6 @@ def split_text_by_sentences(text, max_length=1000):
 
     return chunks
 
-
 def normalize_text(text):
     """
     Normalizes text by converting to lowercase, removing punctuation, and extra spaces.
@@ -73,10 +65,10 @@ def normalize_text(text):
     text = text.strip()
     return text
 
-
 def get_embeddings(texts):
     """
     Generates embeddings for a list of texts using Sentence Transformers.
+    Batch processes for better efficiency.
     """
     if not texts:
         print("Error: No texts provided for embedding.")
@@ -87,20 +79,17 @@ def get_embeddings(texts):
         print(f"Error generating embeddings: {e}")
         return None
 
-
-def rank_chunks(chunks, question, top_k=5):
+def rank_chunks(chunks, question_embedding, top_k=5):
     """
     Ranks chunks based on their similarity to the question and returns the top-k most relevant chunks.
+    Uses batch embedding generation for efficiency.
     """
-    question_embedding = get_embeddings([question])[0]
     chunk_embeddings = get_embeddings(chunks)
-
     similarities = util.pytorch_cos_sim(question_embedding, chunk_embeddings).squeeze().cpu().numpy()
 
     # Sort chunks by similarity score
     ranked_chunks = sorted(zip(chunks, similarities), key=lambda x: x[1], reverse=True)
     return [chunk for chunk, _ in ranked_chunks[:top_k]]
-
 
 def generate_answer(context, question):
     """
@@ -117,12 +106,11 @@ def generate_answer(context, question):
         response = openai.chat.completions.create(
             model="gpt-4",  # Use gpt-3.5-turbo if gpt-4 is not available
             messages=[
-                {"role": "system",
-                 "content": "You are an expert assistant that extracts specific information from the provided context."},
+                {"role": "system", "content": "You are an expert assistant that extracts specific information from the provided context."},
                 {"role": "user", "content": prompt}
             ],
             max_tokens=150,
-            temperature=0.5  # Low temperature to make answers more focused and factual
+            temperature=0.9  # Low temperature to make answers more focused and factual
         )
 
         answer = response.choices[0].message.content.strip()
@@ -131,7 +119,6 @@ def generate_answer(context, question):
     except Exception as e:
         print(f"An error occurred while generating the answer: {e}")
         return "Error generating answer."
-
 
 def score_answer_against_chunk(chunk, answer, question):
     """
@@ -167,7 +154,6 @@ def score_answer_against_chunk(chunk, answer, question):
     # Ensure the score does not exceed 1.0 and properly reflects alignment quality
     return min(1.0, adjusted_score)
 
-
 def save_to_csv(question, best_answer, best_score, time_taken, filename="scoring.csv"):
     """
     Saves the question, best answer, best score, and time taken into a CSV file.
@@ -180,6 +166,11 @@ def save_to_csv(question, best_answer, best_score, time_taken, filename="scoring
     except Exception as e:
         print(f"Error writing to file: {e}")
 
+def process_chunk(chunk, question):
+    """Process each chunk: generate answer and score it."""
+    answer = generate_answer(chunk, question)
+    score = score_answer_against_chunk(chunk, answer, question)
+    return chunk, answer, score
 
 # Main function to run the process
 def main():
@@ -190,30 +181,31 @@ def main():
         print("Failed to retrieve content from the web page.")
         return
 
-    question = "When Thompson was injured what was expected of steph curry"
+    question = "What religion is steph curry?"
     chunks = split_text_by_sentences(context)
 
-    # Rank chunks and select the top 5 most relevant chunks
-    top_chunks = rank_chunks(chunks, question)
+    # Cache the question embedding
+    question_embedding = get_embeddings([question])[0]
 
-    # Initialize variables to keep track of the highest score and the best chunk
-    best_score = 0
-    best_chunk = ""
-    best_answer = ""
+    # Rank chunks and select the top 5 most relevant chunks
+    top_chunks = rank_chunks(chunks, question_embedding)
 
     # Start the timer before generating answer and scoring
     start_time = time.time()
 
-    # Attempt to generate an answer from each top-ranked chunk
-    for i, chunk in enumerate(top_chunks):
-        answer = generate_answer(chunk, question)
-        score = score_answer_against_chunk(chunk, answer, question)
+    # Parallelize chunk processing
+    with ThreadPoolExecutor() as executor:
+        results = list(executor.map(lambda chunk: process_chunk(chunk, question), top_chunks))
 
-        # Update the best chunk if the current score is higher
+    # Find the best score and answer
+    best_score = 0
+    best_answer = ""
+    best_chunk = ""
+    for chunk, answer, score in results:
         if score > best_score:
             best_score = score
-            best_chunk = chunk
             best_answer = answer
+            best_chunk = chunk
 
     # Calculate the time taken
     time_taken = time.time() - start_time
@@ -227,11 +219,10 @@ def main():
     print(f"Best Score: {best_score:.2f}\n")
     print(f"Time Taken: {time_taken:.2f} seconds")
 
-
 if __name__ == "__main__":
     # Add CSV header if file is created for the first time
-   # with open('scoring.csv', 'a', newline='') as file:
-    #    writer = csv.writer(file)
-    #    writer.writerow(["Question", "Best Answer", "Best Score", "Time Taken (seconds)"])
+    with open('scoring.csv', 'a', newline='') as file:
+        writer = csv.writer(file)
+        writer.writerow(["Question", "Best Answer", "Best Score", "Time Taken (seconds)"])
 
     main()

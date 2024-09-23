@@ -81,8 +81,7 @@ def get_embeddings(texts):
 
 def rank_chunks(chunks, question_embedding, top_k=5):
     """
-    Ranks chunks based on their similarity to the question and returns the top-k most relevant chunks.
-    Uses batch embedding generation for efficiency.
+    Ranks chunks bedding generation for efficiency.
     """
     chunk_embeddings = get_embeddings(chunks)
     similarities = util.pytorch_cos_sim(question_embedding, chunk_embeddings).squeeze().cpu().numpy()

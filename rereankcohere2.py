@@ -15,10 +15,10 @@ from langchain.retrievers import ContextualCompressionRetriever
 from langchain.retrievers.document_compressors import CohereRerank
 os.environ["COHERE_API_KEY"] = getpass("Cohere API Key:")
 from langchain.retrievers import BM25Retriever, EnsembleRetriever
-COHERE_API_KEY = "1ODOOnJTr2xY7ncwJP0f54wZaA8o5AmB9hJQmHq7"
+
 OPENAI_API_KEY= os.environ.get("OPENAI_API_KEY")
 # run in debug mode
-
+import csv
 #https://medium.aiplanet.com/advanced-rag-cohere-re-ranker-99acc941601c
 #Note : Here we can see that the processing time of the response generation has come down to 2.42 seconds from 3.15 seconds when the reranking was not applied.
 def pretty_print_docs(docs):
@@ -28,6 +28,19 @@ def pretty_print_docs(docs):
         )
     )
 
+def save_to_csv(question, answer, tottime, answerrank,tottimerank,filename="rerank.csv"):
+    """
+    Saves the question, best answer, best score, and time taken into a CSV file.
+    """
+    try:
+        with open(filename, 'a', newline='') as file:
+            writer = csv.writer(file)
+            writer.writerow([question, answer, tottime, answerrank,tottimerank])
+        print(f"Results saved to {filename}")
+    except Exception as e:
+        print(f"Error writing to file: {e}")
+
+
 pdf_folder_path = "./"
 loader = PyPDFDirectoryLoader(pdf_folder_path)
 docs = loader.load()
@@ -36,7 +49,7 @@ print(len(docs))
 #
 print(docs[1].page_content)
 
-text_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=100)
+text_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=200)
 texts = text_splitter.split_documents(docs)
 print(len(texts))
 
@@ -51,7 +64,7 @@ embeddings = HuggingFaceBgeEmbeddings(
 )
 
 vectorstore = FAISS.from_documents(texts, embeddings)
-retriever = vectorstore.as_retriever(search_kwargs={"k": 15})
+retriever = vectorstore.as_retriever(search_kwargs={"k": 20})
 
 query = "According to Kelly and Williams what is ethics?"
 docs = retriever.get_relevant_documents(query)
@@ -69,11 +82,17 @@ import time
 start = time.time()
 start_time = time.process_time()
 print(qa.run(query=query))
+answer = qa.run(query=query)
 end = time.time()
 end_time = time.process_time()
 print(f"CPU time used: {end_time - start_time} seconds")
 print(end - start)
+tottime = end-start
 ####################### first withour reranker then (next) with reranker
+
+start = time.time()
+
+
 compressor = CohereRerank()
 compression_retriever = ContextualCompressionRetriever(
     base_compressor=compressor, base_retriever=retriever
@@ -87,3 +106,7 @@ qa = RetrievalQA.from_chain_type(llm=llm,
                                  retriever=compression_retriever )
 
 print(qa.run(query=query))
+answerrank  = qa.run(query=query)
+end = time.time()
+tottimerank = end - start
+save_to_csv(query, answer, tottime, answerrank,tottimerank)

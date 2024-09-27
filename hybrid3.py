@@ -22,7 +22,7 @@ pdf_folder_path = "./"
 loader = PyPDFDirectoryLoader(pdf_folder_path)
 documents = loader.load()
 
-text_splitter=RecursiveCharacterTextSplitter(chunk_size=512,chunk_overlap=50)
+text_splitter=RecursiveCharacterTextSplitter(chunk_size=512,chunk_overlap=90)
 text_splits=text_splitter.split_documents(documents)
 print(len(text_splits))
 

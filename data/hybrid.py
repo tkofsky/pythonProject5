@@ -27,7 +27,9 @@ splitter = RecursiveCharacterTextSplitter(chunk_size=512,
                                           chunk_overlap=30)
 chunks = splitter.split_documents(docs)
 
-
+embeddings = HuggingFaceInferenceAPIEmbeddings(
+    api_key='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', model_name="BAAI/bge-base-en-v1.5"
+)
 vectorstore = Chroma.from_documents(chunks, embeddings)
 
 vectorstore_retreiver = vectorstore.as_retriever(search_kwargs={"k": 3})
@@ -36,9 +38,9 @@ keyword_retriever.k =  3
 
 ensemble_retriever = EnsembleRetriever(retrievers=[vectorstore_retreiver,
                                                    keyword_retriever],
-                                       weights=[0.9, 0.7])
+                                       weights=[0.3, 0.7])
 
-model_name = "HuggingFaceH4/zephyr-7b-beta"
+
 
 # function for loading 4-bit quantized model
 def load_quantized_model(model_name: str):

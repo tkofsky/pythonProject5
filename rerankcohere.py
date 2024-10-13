@@ -55,7 +55,7 @@ emails = [
 ]
 
 # Define which fields we want to include for the ranking:
-rank_fields = ["from", "to", "date", "subject", "body"]
+rank_fields = ["from", "to", "date", "subject"]
 
 # To get all fields, you can also call: rank_fields = list(docs[0].keys())
 

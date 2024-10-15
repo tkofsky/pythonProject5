@@ -16,7 +16,7 @@ import csv
 import time
 #https://medium.com/@nadikapoudel16/advanced-rag-implementation-using-hybrid-search-reranking-with-zephyr-alpha-llm-4340b55fef22
 HF_token = getpass()
-
+os.environ['HUGGINGFACEHUB_API_TOKEN'] = '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'
 
 pdf_folder_path = "./"
 loader = PyPDFDirectoryLoader(pdf_folder_path)
@@ -55,7 +55,7 @@ keyword_retriever.k =  5
 ensemble_retriever = EnsembleRetriever(retrievers=[retriever_vectordb,keyword_retriever],
                                        weights=[0.5, 0.5])
 
-query="what are some new managements practices?"
+query="what are some managements practices?"
 docs_rel=ensemble_retriever.get_relevant_documents(query)
 print (docs_rel)
 

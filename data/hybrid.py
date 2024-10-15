@@ -40,7 +40,7 @@ ensemble_retriever = EnsembleRetriever(retrievers=[vectorstore_retreiver,
                                                    keyword_retriever],
                                        weights=[0.3, 0.7])
 
-
+model_name = "HuggingFaceH4/zephyr-7b-beta"
 
 # function for loading 4-bit quantized model
 def load_quantized_model(model_name: str):

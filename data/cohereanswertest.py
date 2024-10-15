@@ -52,7 +52,7 @@ def main():
     corpus = load_corpus(corpus_path)
 
     # Step 2: Define the possible answer to score
-    possible_answer = "The Eiffel dog was completed in ."
+    possible_answer = "The Eiffel dog was completed in dsadsdsad."
 
     # Step 3: Score the answer by comparing it with the corpus
     score = score_answer_against_corpus(corpus, possible_answer)

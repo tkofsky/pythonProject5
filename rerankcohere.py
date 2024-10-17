@@ -62,7 +62,7 @@ rank_fields = ["from", "to", "date", "subject", "body"]
 # Define a query. Here we ask for the pricing from Mircosoft (MS).
 # The model needs to combine information from the email (john_fake_mcgill@microsoft.com>)
 # and the body
-
+query = "What is the pricing that we received from MS?"
 
 # Call rerank, pass in the query, docs, and the rank_fields. Set the model to 'rerank-english-v3.0' or 'rerank-multilingual-v3.0'
 results = co.rerank(query=query, documents=emails, top_n=2, model='rerank-english-v3.0')

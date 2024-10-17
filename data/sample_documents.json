@@ -1,0 +1,14 @@
+[
+    {
+        "title": "Document 1",
+        "content": "RAG improves LLM responses by providing relevant context."
+    },
+    {
+        "title": "Document 2",
+        "content": "Retrieval-augmented generation combines retrieval and generation models."
+    },
+    {
+        "title": "Document 3",
+        "content": "LLMs can struggle with accuracy, but RAG grounds responses in real data."
+    }
+]

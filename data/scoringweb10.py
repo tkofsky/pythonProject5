@@ -148,6 +148,25 @@ def save_to_csv(question, best_answer, best_score, time_taken, scores, filename=
     except Exception as e:
         print(f"Error writing to file: {e}")
 
+def save_to_csv_more(question, best_answer, best_score, time_taken, answer_recall_score,combined_relevance_score, weighted_combined_score,filename="scoring2.csv"):
+    """
+    Saves the question, best answer, best score, time taken, and additional scores to a CSV file.
+    """
+
+
+    try:
+        with open(filename, 'a', newline='') as file:
+            writer = csv.writer(file)
+            writer.writerow([
+                question, best_answer, best_score, time_taken,
+                answer_recall_score, combined_relevance_score, weighted_combined_score
+            ])
+        print(f"Results saved to {filename}")
+    except Exception as e:
+        print(f"Error writing to file: {e}")
+
+
+
 def process_chunk(chunk, question):
     """Process each chunk: generate answer and score it."""
     answer = generate_answer(chunk, question)
@@ -190,6 +209,30 @@ def calculate_combined_relevance_score(query, retrieved_chunks, answer):
     combined_relevance_score = (query_retrieved_similarity + retrieved_answer_similarity) / 2
     return combined_relevance_score
 # Main function to run the process
+def calculate_weighted_combined_score(query, retrieved_chunks, answer, retrieval_weight=0.4, faithfulness_weight=0.4, recall_weight=0.2):
+    """
+    Calculates a Weighted Combined Score (WCS) that combines retrieval relevance,
+    generation faithfulness, and answer recall with specified weights.
+    """
+    # Calculate Retrieval Relevance (similarity between query and retrieved chunks)
+    query_embedding = get_embeddings([query])[0]
+    retrieved_embeddings = get_embeddings(retrieved_chunks)
+    retrieval_relevance = np.mean([util.cos_sim(query_embedding, chunk_emb).item() for chunk_emb in retrieved_embeddings])
+
+    # Calculate Generation Faithfulness (similarity between answer and retrieved chunks)
+    answer_embedding = get_embeddings([answer])[0]
+    faithfulness = np.mean([util.cos_sim(answer_embedding, chunk_emb).item() for chunk_emb in retrieved_embeddings])
+
+    # Calculate Answer Recall (coverage of terms in the answer relative to terms in retrieved chunks)
+    answer_recall = calculate_answer_recall(retrieved_chunks, answer)
+
+    # Calculate Weighted Combined Score
+    wcs = (retrieval_weight * retrieval_relevance) + (faithfulness_weight * faithfulness) + (recall_weight * answer_recall)
+    return wcs
+
+
+
+
 def main():
     url = "https://en.wikipedia.org/wiki/Stephen_Curry"
     context = load_webpage_content(url)
@@ -230,11 +273,13 @@ def main():
     # Calculate the time taken
     answer_recall_score = calculate_answer_recall(top_chunks, best_answer)
     combined_relevance_score = calculate_combined_relevance_score(question, top_chunks, best_answer)
+    weighted_combined_score = calculate_weighted_combined_score(question, top_chunks, best_answer)
 
     time_taken = time.time() - start_time
 
     # Save the best question, answer, score, time taken, and additional scores to scoring.csv
     save_to_csv(question, best_answer, best_score, time_taken, best_scores)
+    save_to_csv_more(question, best_answer, best_score, time_taken,answer_recall_score,combined_relevance_score,weighted_combined_score )
 
     # Display the best answer, corresponding chunk, and time taken
     print(f"Best Chunk:\n{best_chunk}\n")
@@ -245,6 +290,11 @@ def main():
     print(f"RecLL Score: {best_scores['recLL_score']:.2f}")
     print(f"Coverage Score: {best_scores['coverage_score']:.2f}")
     print(f"Diversity Score: {best_scores['diversity_score']:.2f}")
+    print('Answer recall score:',answer_recall_score)
+    print('Combined Relevance Score:' ,combined_relevance_score)
+    print('Weighted Combined Score:', weighted_combined_score)
+
+
     print(f"Time Taken: {time_taken:.2f} seconds")
 
 if __name__ == "__main__":
@@ -254,6 +304,12 @@ if __name__ == "__main__":
         writer.writerow([
             "Question", "Best Answer", "Best Score", "Time Taken (seconds)",
             "Faithfulness Score", "RecLL Score", "Coverage Score", "Diversity Score"
+        ])
+    with open('scoring2.csv', 'a', newline='') as file:
+        writer = csv.writer(file)
+        writer.writerow([
+            "Question", "Best Answer", "Best Score", "Time Taken (seconds)",
+            "Answer recall score", "Combined relevance score", "Weighted combined score"
         ])
 
     main()

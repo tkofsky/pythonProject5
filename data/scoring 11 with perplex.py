@@ -179,7 +179,7 @@ def save_to_csv(question, best_answer, best_score, time_taken, scores, filename=
     except Exception as e:
         print(f"Error writing to file: {e}")
 
-def save_to_csv_more(question, best_answer, best_score, time_taken, answer_recall_score,combined_relevance_score, weighted_combined_score,filename="scoring2.csv"):
+def save_to_csv_more(question, best_answer, best_score, time_taken, answer_recall_score,combined_relevance_score, weighted_combined_score,perplexity,filename="scoring3.csv"):
     """
     Saves the question, best answer, best score, time taken, and additional scores to a CSV file.
     """
@@ -190,7 +190,7 @@ def save_to_csv_more(question, best_answer, best_score, time_taken, answer_recal
             writer = csv.writer(file)
             writer.writerow([
                 question, best_answer, best_score, time_taken,
-                answer_recall_score, combined_relevance_score, weighted_combined_score
+                answer_recall_score, combined_relevance_score, weighted_combined_score,perplexity
             ])
         print(f"Results saved to {filename}")
     except Exception as e:
@@ -305,12 +305,12 @@ def main():
     answer_recall_score = calculate_answer_recall(top_chunks, best_answer)
     combined_relevance_score = calculate_combined_relevance_score(question, top_chunks, best_answer)
     weighted_combined_score = calculate_weighted_combined_score(question, top_chunks, best_answer)
-
+    perplexity = calculate_perplexity(best_answer)
     time_taken = time.time() - start_time
 
     # Save the best question, answer, score, time taken, and additional scores to scoring.csv
     save_to_csv(question, best_answer, best_score, time_taken, best_scores)
-    save_to_csv_more(question, best_answer, best_score, time_taken,answer_recall_score,combined_relevance_score,weighted_combined_score )
+    save_to_csv_more(question, best_answer, best_score, time_taken,answer_recall_score,combined_relevance_score,weighted_combined_score,perplexity )
 
     # Display the best answer, corresponding chunk, and time taken
     print(f"Best Chunk:\n{best_chunk}\n")
@@ -324,8 +324,8 @@ def main():
     print('Answer recall score:',answer_recall_score)
     print('Combined Relevance Score:' ,combined_relevance_score)
     print('Weighted Combined Score:', weighted_combined_score)
-    perplexity = calculate_perplexity(best_answer)
-    print (perplexity)
+    print('Perplexity:', perplexity)
+
 
     print(f"Time Taken: {time_taken:.2f} seconds")
 
@@ -343,5 +343,14 @@ if __name__ == "__main__":
             "Question", "Best Answer", "Best Score", "Time Taken (seconds)",
             "Answer recall score", "Combined relevance score", "Weighted combined score"
         ])
+
+    #with open('scoring3.csv', 'a', newline='') as file:
+       # writer = csv.writer(file)
+       # writer.writerow([
+          #  "Question", "Best Answer", "Best Score", "Time Taken (seconds)",
+          #  "Answer recall score", "Combined relevance score", "Weighted combined score, ","Perplexity"
+
+        #])
+
 
     main()

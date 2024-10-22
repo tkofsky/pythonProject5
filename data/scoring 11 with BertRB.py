@@ -16,6 +16,33 @@ openai.api_key = os.environ.get("OPENAI_API_KEY")
 model = SentenceTransformer('sentence-transformers/msmarco-distilbert-base-v4')  # QA-focused model
 
 
+def process_chunk_without_groundtruth(chunk, question, retrieved_content):
+    """Process each chunk without ground truth: generate answer, and score it based on semantic similarity."""
+    answer = generate_answer(chunk, question)
+
+    # Semantic similarity to query and retrieved content
+    similarity_to_query = calculate_similarity_to_query(answer, question)
+    similarity_to_retrieved = calculate_similarity_to_retrieved_content(answer, retrieved_content)
+
+    # Faithfulness to the retrieved content
+    faithfulness_score = calculate_faithfulness_to_retrieved_content(retrieved_content, answer)
+
+    # Combined score
+    combined_score = calculate_combined_score_without_groundtruth(answer, question, retrieved_content)
+
+    return {
+        "answer": answer,
+        "similarity_to_query": similarity_to_query,
+        "similarity_to_retrieved": similarity_to_retrieved,
+        "faithfulness_score": faithfulness_score,
+        "combined_score": combined_score
+    }
+
+
+
+
+
+
 import torch
 from transformers import GPT2Tokenizer, GPT2LMHeadModel
 
@@ -323,7 +350,7 @@ def main():
     print(f"Diversity Score: {best_scores['diversity_score']:.2f}")
     print('Answer recall score:',answer_recall_score)
     print('Combined Relevance Score:' ,combined_relevance_score)
-    print('Weighted Combined Score:', weighted_combined_score) ## contains retrieval_weight=0.4, faithfulness_weight=0.4, recall_weight=0.2
+    print('Weighted Combined Score:', weighted_combined_score)
     print('Perplexity:', perplexity)
 
 

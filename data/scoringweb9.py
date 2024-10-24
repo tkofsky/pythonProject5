@@ -174,6 +174,7 @@ def process_chunk(chunk, question):
 # Main function to run the process
 def main():
     url = "https://en.wikipedia.org/wiki/Stephen_Curry"
+    url = "https://www.cnbc.com/2024/10/22/stock-market-today-live-updates.html"
     context = load_webpage_content(url)
 
     if not context:
@@ -181,6 +182,7 @@ def main():
         return
 
     question = "What religion is steph curry?"
+    question = "What did higher yields do?"
     chunks = split_text_by_sentences(context)
 
     # Cache the question embedding

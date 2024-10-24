@@ -95,7 +95,7 @@ def get_embeddings(texts):
         print(f"Error generating embeddings: {e}")
         return None
 
-def rank_chunks(chunks, question_embedding, top_k=30):
+def rank_chunks(chunks, question_embedding, top_k=5):
     chunk_embeddings = get_embeddings(chunks)
     similarities = util.pytorch_cos_sim(question_embedding, chunk_embeddings).squeeze().cpu().numpy()
 
@@ -151,6 +151,7 @@ def score_answer_against_chunk(chunk, answer, question):
     key_term_overlap = len(question_terms.intersection(answer_terms)) / len(question_terms) if question_terms else 0
 
     adjusted_score = (normalized_similarity_score * penalty) * (0.7 + (0.3 * key_term_overlap))
+    adjusted_score = (normalized_similarity_score ) * (0.8 + (0.3 * key_term_overlap))
     faithfulness_score = min(1.0, adjusted_score)
 
     recLL_score = similarity_score if normalized_answer in normalized_chunk else 0.5 * similarity_score
@@ -215,7 +216,9 @@ def calculate_answer_recall(retrieved_chunks, answer):
     answer_terms = set(normalize_text(answer).split())
 
     common_terms = retrieved_terms.intersection(answer_terms)
-    answer_recall_score = len(common_terms) / len(retrieved_terms) if retrieved_terms else 0.0
+    answer_recall_score = len(common_terms) / (len(retrieved_terms)*.2) if retrieved_terms else 0.0
+    #answer_recall_score = len(common_terms) / (len(retrieved_terms)  if retrieved_terms else 0.0
+
 
     return answer_recall_score
 
@@ -240,26 +243,27 @@ def calculate_combined_relevance_score(query, retrieved_chunks, answer):
     combined_relevance_score = (query_retrieved_similarity + retrieved_answer_similarity) / 2
     return combined_relevance_score
 # Main function to run the process
-def calculate_weighted_combined_score(query, retrieved_chunks, answer, retrieval_weight=0.4, faithfulness_weight=0.4, recall_weight=0.2):
+def calculate_weighted_combined_score(query, retrieved_chunks, answer, retrieval_score, faithfulness, recall,
+                                      perplexity, weights=None):
     """
     Calculates a Weighted Combined Score (WCS) that combines retrieval relevance,
-    generation faithfulness, and answer recall with specified weights.
+    generation faithfulness, answer recall, and perplexity with specified weights.
     """
-    # Calculate Retrieval Relevance (similarity between query and retrieved chunks)
-    query_embedding = get_embeddings([query])[0]
-    retrieved_embeddings = get_embeddings(retrieved_chunks)
-    retrieval_relevance = np.mean([util.cos_sim(query_embedding, chunk_emb).item() for chunk_emb in retrieved_embeddings])
+    if weights is None:
+        weights = {'retrieval_weight': 0.10, 'faithfulness_weight': 0.75, 'recall_weight': 0.05, 'perplexity_weight': 0.10}
 
-    # Calculate Generation Faithfulness (similarity between answer and retrieved chunks)
-    answer_embedding = get_embeddings([answer])[0]
-    faithfulness = np.mean([util.cos_sim(answer_embedding, chunk_emb).item() for chunk_emb in retrieved_embeddings])
+    # Normalize perplexity (lower perplexity is better, so we invert it)
+    normalized_perplexity = 1 / (perplexity + 1e-5)
 
-    # Calculate Answer Recall (coverage of terms in the answer relative to terms in retrieved chunks)
-    answer_recall = calculate_answer_recall(retrieved_chunks, answer)
+    # Calculate the weighted score
+    combined_score = (
+            weights['retrieval_weight'] * retrieval_score +
+            weights['faithfulness_weight'] * faithfulness +
+            weights['recall_weight'] * recall +
+            weights['perplexity_weight'] * normalized_perplexity
+    )
 
-    # Calculate Weighted Combined Score
-    wcs = (retrieval_weight * retrieval_relevance) + (faithfulness_weight * faithfulness) + (recall_weight * answer_recall)
-    return wcs
+    return combined_score*1.2  ############################################################
 
 
 
@@ -273,21 +277,19 @@ def main():
         return
 
     question = "What religion is steph curry?"
-    question = "What faith is steph curry?"
-    question = "how many all-star games did he play by the time it was 2016 all-star weekend"
-    question = "in the playoffs against the houston rockets what injury did curry have"
-    question = "In the Warriors' regular-season finale on April 13 against the Memphis Grizzlies"
-    question  = "what did head coach Bob McKillop say about curry"
-    question = "in the  2014–15 season what changes to steve kerr implement"
-    question = "After Davidson's loss against Kansas what did curry announce"
-    question = "were did curry's family move to After Dell's retirement"
+    question = "Who also scored 118 points in the first three games"
+    #question = "how many all-star games did he play by the time it was 2016 all-star weekend"
+    question = "in the playoffs against the houston rockets why did he miss some games"
+    #question = "In the Warriors' regular-season finale on April 13 against the Memphis Grizzlies how many points to cury score"
+    #question = "in the  2014–15 season what changes to steve kerr implement"
+    #question = "After Davidson's loss against Kansas what did curry announce"
     chunks = split_text_by_sentences(context)
 
     # Cache the question embedding
     question_embedding = get_embeddings([question])[0]
 
-    # Rank chunks and select the top 5 most relevant chunks
-    top_chunks, retrieval_scores = rank_chunks(chunks, question_embedding)
+    # Rank chunks and select the top 5 most relevant chunks (initial retrieval ranking)
+    top_chunks, retrieval_scores = rank_chunks(chunks, question_embedding,top_k=9)
     avg_retrieval_score = np.mean(retrieval_scores)
 
     # Start the timer before generating answer and scoring
@@ -297,44 +299,46 @@ def main():
     with ThreadPoolExecutor() as executor:
         results = list(executor.map(lambda chunk: process_chunk(chunk, question), top_chunks))
 
-    # Find the best score and answer
-    best_score = 0
-    best_answer = ""
-    best_chunk = ""
-    best_scores = None
-    for chunk, answer, faithfulness_score, scores in results:
-        if faithfulness_score > best_score:
-            best_score = faithfulness_score
-            best_answer = answer
-            best_chunk = chunk
-            best_scores = scores
+    # Re-rank chunks based on the combined score
+    reranked_chunks = []
+    for i, (chunk, answer, faithfulness_score, scores) in enumerate(results):
+        retrieval_score = retrieval_scores[i]
+        answer_recall_score = calculate_answer_recall([chunk], answer)
+        perplexity = calculate_perplexity(answer)
+
+        # Calculate the combined score
+        combined_score = calculate_weighted_combined_score(
+            question, [chunk], answer, retrieval_score, faithfulness_score, answer_recall_score, perplexity
+        )
+
+        # Store the chunk, answer, and combined score for re-ranking
+        reranked_chunks.append((chunk, answer, combined_score, scores))
+
+    # Sort the chunks based on the combined score (highest to lowest)
+    reranked_chunks.sort(key=lambda x: x[2], reverse=True)
+
+    # Select the best chunk and corresponding answer based on the re-ranked combined score
+    best_chunk, best_answer, best_combined_score, best_scores = reranked_chunks[0]
 
     # Calculate the time taken
-    answer_recall_score = calculate_answer_recall(top_chunks, best_answer)
-    combined_relevance_score = calculate_combined_relevance_score(question, top_chunks, best_answer)
-    weighted_combined_score = calculate_weighted_combined_score(question, top_chunks, best_answer)
-    perplexity = calculate_perplexity(best_answer)
     time_taken = time.time() - start_time
 
-    # Save the best question, answer, score, time taken, and additional scores to scoring.csv
-    save_to_csv(question, best_answer, best_score, time_taken, best_scores)
-    save_to_csv_more(question, best_answer, best_score, time_taken,answer_recall_score,combined_relevance_score,weighted_combined_score,perplexity )
+    # Save the best question, answer, score, time taken, and additional scores to CSV
+    save_to_csv(question, best_answer, best_combined_score, time_taken, best_scores)
+    save_to_csv_more(
+        question, best_answer, best_combined_score, time_taken,
+        best_scores['faithfulness_score'], best_scores['recLL_score'], best_combined_score, perplexity
+    )
 
     # Display the best answer, corresponding chunk, and time taken
     print(f"Best Chunk:\n{best_chunk}\n")
     print(f"Best Answer: {best_answer}\n")
-    print(f"Best Score: {best_score:.2f}\n")
-    print(f"Average Retrieval Score: {avg_retrieval_score:.2f}\n")
+    print(f"Best Combined Score: {best_combined_score:.2f}\n")
     print(f"Faithfulness Score: {best_scores['faithfulness_score']:.2f}")
     print(f"RecLL Score: {best_scores['recLL_score']:.2f}")
     print(f"Coverage Score: {best_scores['coverage_score']:.2f}")
     print(f"Diversity Score: {best_scores['diversity_score']:.2f}")
-    print('Answer recall score:',answer_recall_score)
-    print('Combined Relevance Score:' ,combined_relevance_score)
-    print('Weighted Combined Score:', weighted_combined_score) ## contains retrieval_weight=0.4, faithfulness_weight=0.4, recall_weight=0.2
-    print('Perplexity:', perplexity)
-
-
+    print(f"Perplexity: {perplexity:.2f}")
     print(f"Time Taken: {time_taken:.2f} seconds")
 
 if __name__ == "__main__":
@@ -362,10 +366,3 @@ if __name__ == "__main__":
 
 
     main()
-
-
-
-#Retrieval Score: Comes from the retrieval stage (could be BM25, embeddings, or both).
-#Faithfulness Score: Measures how faithful the generated answer is to the retrieved content.
-#Answer Recall Score: Measures how much of the relevant content from the retrieved chunks is covered in the answer.
-#Perplexity: Measures how confident the language model is in its generated answer (lower perplexity is better).

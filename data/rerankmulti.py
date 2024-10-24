@@ -8,32 +8,51 @@ import numpy as np
 import re
 from concurrent.futures import ThreadPoolExecutor
 import os
-
+from rank_bm25 import BM25Okapi
+import torch
+from transformers import GPT2Tokenizer, GPT2LMHeadModel
+from nltk.corpus import wordnet
+import nltk
+nltk.download('wordnet')
 # Set your OpenAI API key
 openai.api_key = os.environ.get("OPENAI_API_KEY")
 
 # Load a Sentence Transformer model fine-tuned for question answering
 model = SentenceTransformer('sentence-transformers/msmarco-distilbert-base-v4')  # QA-focused model
 
+# GPT-2 Tokenizer and Model for Perplexity Calculation
+tokenizer = GPT2Tokenizer.from_pretrained("gpt2")
+gpt_model = GPT2LMHeadModel.from_pretrained("gpt2")
 
-import torch
-from transformers import GPT2Tokenizer, GPT2LMHeadModel
+
+def process_chunk(chunk, question):
+    """
+    Process each chunk: generate multiple answers, rerank them, and return the best.
+    """
+    # Generate multiple answers for the chunk
+    answers = generate_multiple_answers(chunk, question)
+
+    # Rerank answers based on scores
+    reranked_answers = rerank_answers(answers, chunk, question)
+
+    # Select the best answer and its score
+    best_answer, best_score = reranked_answers[0]
+
+    # Score the best answer against the chunk
+    scores = score_answer_against_chunk(chunk, best_answer, question)
+
+    return chunk, best_answer, best_score, scores
+
 
 def calculate_perplexity(text):
     """
     Calculates the perplexity of the given text using GPT-2.
     """
     try:
-        # Load pre-trained GPT-2 tokenizer and model
-        tokenizer = GPT2Tokenizer.from_pretrained("gpt2")
-        model = GPT2LMHeadModel.from_pretrained("gpt2")
-
-        # Encode input text into token IDs
         input_ids = tokenizer.encode(text, return_tensors='pt')
 
-        # Disable gradient calculations for evaluation
         with torch.no_grad():
-            outputs = model(input_ids, labels=input_ids)
+            outputs = gpt_model(input_ids, labels=input_ids)
             loss = outputs.loss
             perplexity = torch.exp(loss)
 
@@ -42,9 +61,6 @@ def calculate_perplexity(text):
     except Exception as e:
         print(f"An error occurred while calculating perplexity: {e}")
         return None
-
-
-
 
 def load_webpage_content(url):
     try:
@@ -95,12 +111,29 @@ def get_embeddings(texts):
         print(f"Error generating embeddings: {e}")
         return None
 
-def rank_chunks(chunks, question_embedding, top_k=30):
-    chunk_embeddings = get_embeddings(chunks)
-    similarities = util.pytorch_cos_sim(question_embedding, chunk_embeddings).squeeze().cpu().numpy()
+def expand_query(query):
+    expanded_terms = set(query.split())
+    for word in query.split():
+        for syn in wordnet.synsets(word):
+            for lemma in syn.lemmas():
+                expanded_terms.add(lemma.name())  # Add synonyms to the query
+    return " ".join(expanded_terms)
 
-    ranked_chunks = sorted(zip(chunks, similarities), key=lambda x: x[1], reverse=True)
-    return [chunk for chunk, _ in ranked_chunks[:top_k]], [score for _, score in ranked_chunks[:top_k]]
+def hybrid_rank_chunks(chunks, question):
+    # BM25 Ranking
+    tokenized_chunks = [normalize_text(chunk).split() for chunk in chunks]
+    bm25 = BM25Okapi(tokenized_chunks)
+    bm25_scores = bm25.get_scores(normalize_text(question).split())
+
+    # Embedding-based ranking
+    chunk_embeddings = get_embeddings(chunks)
+    question_embedding = get_embeddings([question])[0]
+    embedding_scores = util.pytorch_cos_sim(question_embedding, chunk_embeddings).squeeze().cpu().numpy()
+
+    # Combine BM25 and embedding scores
+    combined_scores = 0.5 * bm25_scores + 0.5 * embedding_scores
+    ranked_chunks = [x for _, x in sorted(zip(combined_scores, chunks), reverse=True)]
+    return ranked_chunks, combined_scores
 
 def generate_answer(context, question):
     """
@@ -115,7 +148,7 @@ def generate_answer(context, question):
         )
 
         response = openai.chat.completions.create(
-            model="gpt-4",  # Use gpt-3.5-turbo if gpt-4 is not available
+            model="gpt-4",
             messages=[
                 {"role": "system", "content": "You are an expert assistant that extracts specific information from the provided context."},
                 {"role": "user", "content": prompt}
@@ -124,6 +157,7 @@ def generate_answer(context, question):
             temperature=0.9  # Low temperature to make answers more focused and factual
         )
 
+        #answer = response.choices[0].message['content'].strip()
         answer = response.choices[0].message.content.strip()
         return answer
 
@@ -142,15 +176,11 @@ def score_answer_against_chunk(chunk, answer, question):
     similarity_score = util.cos_sim(answer_embedding, chunk_embedding).item()
     normalized_similarity_score = (similarity_score + 1) / 2
 
-    penalty = 1.0
-    if "context does not provide" in normalized_answer or "not listed" in normalized_answer:
-        penalty = 0.5
-
     question_terms = set(normalized_question.split())
     answer_terms = set(normalized_answer.split())
     key_term_overlap = len(question_terms.intersection(answer_terms)) / len(question_terms) if question_terms else 0
 
-    adjusted_score = (normalized_similarity_score * penalty) * (0.7 + (0.3 * key_term_overlap))
+    adjusted_score = (normalized_similarity_score * 0.7 + 0.3 * key_term_overlap)
     faithfulness_score = min(1.0, adjusted_score)
 
     recLL_score = similarity_score if normalized_answer in normalized_chunk else 0.5 * similarity_score
@@ -165,9 +195,6 @@ def score_answer_against_chunk(chunk, answer, question):
     }
 
 def save_to_csv(question, best_answer, best_score, time_taken, scores, filename="scoring.csv"):
-    """
-    Saves the question, best answer, best score, time taken, and additional scores to a CSV file.
-    """
     try:
         with open(filename, 'a', newline='') as file:
             writer = csv.writer(file)
@@ -179,37 +206,19 @@ def save_to_csv(question, best_answer, best_score, time_taken, scores, filename=
     except Exception as e:
         print(f"Error writing to file: {e}")
 
-def save_to_csv_more(question, best_answer, best_score, time_taken, answer_recall_score,combined_relevance_score, weighted_combined_score,perplexity,filename="scoring3.csv"):
-    """
-    Saves the question, best answer, best score, time taken, and additional scores to a CSV file.
-    """
-
-
+def save_to_csv_more(question, best_answer, best_score, time_taken, answer_recall_score, combined_relevance_score, weighted_combined_score, perplexity, filename="scoring3.csv"):
     try:
         with open(filename, 'a', newline='') as file:
             writer = csv.writer(file)
             writer.writerow([
                 question, best_answer, best_score, time_taken,
-                answer_recall_score, combined_relevance_score, weighted_combined_score,perplexity
+                answer_recall_score, combined_relevance_score, weighted_combined_score, perplexity
             ])
         print(f"Results saved to {filename}")
     except Exception as e:
         print(f"Error writing to file: {e}")
 
-
-
-def process_chunk(chunk, question):
-    """Process each chunk: generate answer and score it."""
-    answer = generate_answer(chunk, question)
-    scores = score_answer_against_chunk(chunk, answer, question)
-    return chunk, answer, scores["faithfulness_score"], scores
-
-
 def calculate_answer_recall(retrieved_chunks, answer):
-    """
-    Calculates the Answer Recall by checking the coverage of terms in the answer
-    relative to terms in the retrieved chunks.
-    """
     combined_retrieved_text = " ".join(retrieved_chunks)
     retrieved_terms = set(normalize_text(combined_retrieved_text).split())
     answer_terms = set(normalize_text(answer).split())
@@ -219,49 +228,37 @@ def calculate_answer_recall(retrieved_chunks, answer):
 
     return answer_recall_score
 
+def calculate_weighted_combined_score(query, retrieved_chunks, answer, retrieval_score, faithfulness, recall, perplexity, weights=None):
+    if weights is None:
+        weights = {'retrieval_weight': 0.3, 'faithfulness_weight': 0.3, 'recall_weight': 0.2, 'perplexity_weight': 0.2}
 
-def calculate_combined_relevance_score(query, retrieved_chunks, answer):
-    """
-    Calculates the Combined Relevance Score by averaging the similarity
-    between query and retrieved chunks and retrieved chunks and the answer.
-    """
-    query_embedding = get_embeddings([query])[0]
-    retrieved_embeddings = get_embeddings(retrieved_chunks)
-    answer_embedding = get_embeddings([answer])[0]
+    normalized_perplexity = 1 / (perplexity + 1e-5)
 
-    # Similarity between query and retrieved chunks
-    query_retrieved_similarity = np.mean(
-        [util.cos_sim(query_embedding, chunk_emb).item() for chunk_emb in retrieved_embeddings])
+    combined_score = (
+        weights['retrieval_weight'] * retrieval_score +
+        weights['faithfulness_weight'] * faithfulness +
+        weights['recall_weight'] * recall +
+        weights['perplexity_weight'] * normalized_perplexity
+    )
 
-    # Similarity between retrieved chunks and the answer
-    retrieved_answer_similarity = np.mean(
-        [util.cos_sim(chunk_emb, answer_embedding).item() for chunk_emb in retrieved_embeddings])
+    return combined_score
 
-    combined_relevance_score = (query_retrieved_similarity + retrieved_answer_similarity) / 2
-    return combined_relevance_score
-# Main function to run the process
-def calculate_weighted_combined_score(query, retrieved_chunks, answer, retrieval_weight=0.4, faithfulness_weight=0.4, recall_weight=0.2):
-    """
-    Calculates a Weighted Combined Score (WCS) that combines retrieval relevance,
-    generation faithfulness, and answer recall with specified weights.
-    """
-    # Calculate Retrieval Relevance (similarity between query and retrieved chunks)
-    query_embedding = get_embeddings([query])[0]
-    retrieved_embeddings = get_embeddings(retrieved_chunks)
-    retrieval_relevance = np.mean([util.cos_sim(query_embedding, chunk_emb).item() for chunk_emb in retrieved_embeddings])
+def rerank_answers(answers, chunk, question):
+    reranked_answers = []
+    for answer in answers:
+        scores = score_answer_against_chunk(chunk, answer, question)
+        combined_score = calculate_weighted_combined_score(question, [chunk], answer, scores['faithfulness_score'], scores['coverage_score'], scores['diversity_score'], 0)
+        reranked_answers.append((answer, combined_score))
 
-    # Calculate Generation Faithfulness (similarity between answer and retrieved chunks)
-    answer_embedding = get_embeddings([answer])[0]
-    faithfulness = np.mean([util.cos_sim(answer_embedding, chunk_emb).item() for chunk_emb in retrieved_embeddings])
+    reranked_answers.sort(key=lambda x: x[1], reverse=True)
+    return reranked_answers
 
-    # Calculate Answer Recall (coverage of terms in the answer relative to terms in retrieved chunks)
-    answer_recall = calculate_answer_recall(retrieved_chunks, answer)
-
-    # Calculate Weighted Combined Score
-    wcs = (retrieval_weight * retrieval_relevance) + (faithfulness_weight * faithfulness) + (recall_weight * answer_recall)
-    return wcs
-
-
+def generate_multiple_answers(chunk, question, num_answers=3):
+    answers = []
+    for _ in range(num_answers):
+        answer = generate_answer(chunk, question)
+        answers.append(answer)
+    return answers
 
 
 def main():
@@ -273,68 +270,65 @@ def main():
         return
 
     question = "What religion is steph curry?"
-    question = "What faith is steph curry?"
-    question = "how many all-star games did he play by the time it was 2016 all-star weekend"
-    question = "in the playoffs against the houston rockets what injury did curry have"
-    question = "In the Warriors' regular-season finale on April 13 against the Memphis Grizzlies"
-    question  = "what did head coach Bob McKillop say about curry"
-    question = "in the  2014–15 season what changes to steve kerr implement"
-    question = "After Davidson's loss against Kansas what did curry announce"
-    question = "were did curry's family move to After Dell's retirement"
+
+    # Optional: expand the query to improve retrieval
+    expanded_question = expand_query(question)
+
     chunks = split_text_by_sentences(context)
 
     # Cache the question embedding
-    question_embedding = get_embeddings([question])[0]
+    question_embedding = get_embeddings([expanded_question])[0]
 
-    # Rank chunks and select the top 5 most relevant chunks
-    top_chunks, retrieval_scores = rank_chunks(chunks, question_embedding)
-    avg_retrieval_score = np.mean(retrieval_scores)
+    # Use hybrid retrieval (BM25 + embeddings) to rank the chunks
+    top_chunks, retrieval_scores = hybrid_rank_chunks(chunks, expanded_question)
 
-    # Start the timer before generating answer and scoring
+    # Start the timer before generating answers and scoring
     start_time = time.time()
 
     # Parallelize chunk processing
     with ThreadPoolExecutor() as executor:
-        results = list(executor.map(lambda chunk: process_chunk(chunk, question), top_chunks))
+        results = list(executor.map(lambda chunk: process_chunk(chunk, expanded_question), top_chunks))
 
-    # Find the best score and answer
-    best_score = 0
-    best_answer = ""
-    best_chunk = ""
-    best_scores = None
-    for chunk, answer, faithfulness_score, scores in results:
-        if faithfulness_score > best_score:
-            best_score = faithfulness_score
-            best_answer = answer
-            best_chunk = chunk
-            best_scores = scores
+    # Rerank chunks based on the combined score (after reranking the answers as well)
+    reranked_chunks = []
+    for i, (chunk, answer, faithfulness_score, scores) in enumerate(results):
+        retrieval_score = retrieval_scores[i]
+        answer_recall_score = calculate_answer_recall([chunk], answer)
+        perplexity = calculate_perplexity(answer)
+
+        # Calculate the combined score
+        combined_score = calculate_weighted_combined_score(
+            expanded_question, [chunk], answer, retrieval_score, faithfulness_score, answer_recall_score, perplexity
+        )
+
+        # Store the chunk, answer, and combined score for re-ranking
+        reranked_chunks.append((chunk, answer, combined_score, scores))
+
+    # Sort the chunks based on the combined score (highest to lowest)
+    reranked_chunks.sort(key=lambda x: x[2], reverse=True)
+
+    # Select the best chunk and corresponding answer based on the re-ranked combined score
+    best_chunk, best_answer, best_combined_score, best_scores = reranked_chunks[0]
 
     # Calculate the time taken
-    answer_recall_score = calculate_answer_recall(top_chunks, best_answer)
-    combined_relevance_score = calculate_combined_relevance_score(question, top_chunks, best_answer)
-    weighted_combined_score = calculate_weighted_combined_score(question, top_chunks, best_answer)
-    perplexity = calculate_perplexity(best_answer)
     time_taken = time.time() - start_time
 
-    # Save the best question, answer, score, time taken, and additional scores to scoring.csv
-    save_to_csv(question, best_answer, best_score, time_taken, best_scores)
-    save_to_csv_more(question, best_answer, best_score, time_taken,answer_recall_score,combined_relevance_score,weighted_combined_score,perplexity )
+    # Save the best question, answer, score, time taken, and additional scores to CSV
+    save_to_csv(question, best_answer, best_combined_score, time_taken, best_scores)
+    save_to_csv_more(
+        question, best_answer, best_combined_score, time_taken,
+        best_scores['faithfulness_score'], best_scores['recLL_score'], best_combined_score, calculate_perplexity(best_answer)
+    )
 
     # Display the best answer, corresponding chunk, and time taken
     print(f"Best Chunk:\n{best_chunk}\n")
     print(f"Best Answer: {best_answer}\n")
-    print(f"Best Score: {best_score:.2f}\n")
-    print(f"Average Retrieval Score: {avg_retrieval_score:.2f}\n")
+    print(f"Best Combined Score: {best_combined_score:.2f}\n")
     print(f"Faithfulness Score: {best_scores['faithfulness_score']:.2f}")
     print(f"RecLL Score: {best_scores['recLL_score']:.2f}")
     print(f"Coverage Score: {best_scores['coverage_score']:.2f}")
     print(f"Diversity Score: {best_scores['diversity_score']:.2f}")
-    print('Answer recall score:',answer_recall_score)
-    print('Combined Relevance Score:' ,combined_relevance_score)
-    print('Weighted Combined Score:', weighted_combined_score) ## contains retrieval_weight=0.4, faithfulness_weight=0.4, recall_weight=0.2
-    print('Perplexity:', perplexity)
-
-
+    print(f"Perplexity: {calculate_perplexity(best_answer):.2f}")
     print(f"Time Taken: {time_taken:.2f} seconds")
 
 if __name__ == "__main__":
@@ -352,20 +346,4 @@ if __name__ == "__main__":
             "Answer recall score", "Combined relevance score", "Weighted combined score"
         ])
 
-    #with open('scoring3.csv', 'a', newline='') as file:
-       # writer = csv.writer(file)
-       # writer.writerow([
-          #  "Question", "Best Answer", "Best Score", "Time Taken (seconds)",
-          #  "Answer recall score", "Combined relevance score", "Weighted combined score, ","Perplexity"
-
-        #])
-
-
     main()
-
-
-
-#Retrieval Score: Comes from the retrieval stage (could be BM25, embeddings, or both).
-#Faithfulness Score: Measures how faithful the generated answer is to the retrieved content.
-#Answer Recall Score: Measures how much of the relevant content from the retrieved chunks is covered in the answer.
-#Perplexity: Measures how confident the language model is in its generated answer (lower perplexity is better).

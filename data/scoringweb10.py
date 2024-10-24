@@ -242,6 +242,8 @@ def main():
         return
 
     question = "What religion is steph curry?"
+    question = "In Game 5 of the Conference Semifinals against the Memphis Grizzlies, what did curry become?"
+    question = "After Davidson's loss against Kansas what did curry announce"
     chunks = split_text_by_sentences(context)
 
     # Cache the question embedding

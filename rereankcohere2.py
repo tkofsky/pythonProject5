@@ -15,7 +15,7 @@ from langchain.retrievers import ContextualCompressionRetriever
 from langchain.retrievers.document_compressors import CohereRerank
 os.environ["COHERE_API_KEY"] = getpass("Cohere API Key:")
 from langchain.retrievers import BM25Retriever, EnsembleRetriever
-
+cohere="1ODOOnJTr2xY7ncwJP0f54wZaA8o5AmB9hJQmHq7"
 OPENAI_API_KEY= os.environ.get("OPENAI_API_KEY")
 # run in debug mode
 import csv
@@ -67,6 +67,7 @@ vectorstore = FAISS.from_documents(texts, embeddings)
 retriever = vectorstore.as_retriever(search_kwargs={"k": 20})
 
 query = "According to Kelly and Williams what is ethics?"
+query = "whats is the comparisson between management and leadership accoring to kotter"
 docs = retriever.get_relevant_documents(query)
 pretty_print_docs(docs)
 

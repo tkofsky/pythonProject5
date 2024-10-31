@@ -238,7 +238,7 @@ def main():
     context = load_webpage_content(url)
 
     if not context:
-        print("Failed to retrieve content from the web page.")
+        #print("Failed to retrieve content from the web page.")
         return
 
     question = "What religion is steph curry?"

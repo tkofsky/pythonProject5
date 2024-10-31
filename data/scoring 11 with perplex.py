@@ -258,7 +258,7 @@ def calculate_weighted_combined_score(query, retrieved_chunks, answer, retrieval
     answer_recall = calculate_answer_recall(retrieved_chunks, answer)
 
     # Calculate Weighted Combined Score
-    wcs = (retrieval_weight * retrieval_relevance) + (faithfulness_weight * faithfulness) + (recall_weight * answer_recall)
+    wcs = (retrieval_weight  * retrieval_relevance) + (faithfulness_weight * faithfulness) + (recall_weight * answer_recall)
     return wcs
 
 

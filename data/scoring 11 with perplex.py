@@ -95,7 +95,7 @@ def get_embeddings(texts):
         print(f"Error generating embeddings: {e}")
         return None
 
-def rank_chunks(chunks, question_embedding, top_k=30):
+def rank_chunks(chunks, question_embedding, top_k=4):
     chunk_embeddings = get_embeddings(chunks)
     similarities = util.pytorch_cos_sim(question_embedding, chunk_embeddings).squeeze().cpu().numpy()
 
@@ -265,7 +265,11 @@ def calculate_weighted_combined_score(query, retrieved_chunks, answer, retrieval
 
 
 def main():
-    url = "https://en.wikipedia.org/wiki/Stephen_Curry"
+
+    url = "https://en.wikipedia.org/wiki/Golden_State_Warriors"
+    #url = "https://en.wikipedia.org/wiki/Stephen_Curry"
+
+
     context = load_webpage_content(url)
 
     if not context:
@@ -281,6 +285,13 @@ def main():
     question = "in the  2014–15 season what changes to steve kerr implement"
     question = "After Davidson's loss against Kansas what did curry announce"
     question = "were did curry's family move to After Dell's retirement"
+    question = "how many points did he score in his first collegiate game"
+    question = "what records do the warriores hold"
+    question = "What religion is steph curry?"
+    question = "in the  2014–15 season what changes to steve kerr implement"
+    question = "were did curry's family movr to After Dell's retirement"
+    question = "what did the new logo on the uniforms look like"  # q12
+
     chunks = split_text_by_sentences(context)
 
     # Cache the question embedding

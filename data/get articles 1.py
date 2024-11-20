@@ -191,3 +191,51 @@ content = fetch_seeking_alpha_article_content(url)
 if content:
     for part in content:
         print(part)
+
+
+
+#######################################GET 2 articles or more from WIKI
+import requests
+from bs4 import BeautifulSoup
+
+
+def fetch_wikipedia_article_content(url):
+    # Fetch the article page
+    response = requests.get(url)
+    if response.status_code != 200:
+        print(f"Failed to fetch article: {response.status_code}")
+        return None
+
+    # Parse the HTML content
+    soup = BeautifulSoup(response.text, 'html.parser')
+
+    # Find the main content area in the Wikipedia article
+    content_div = soup.find('div', {'id': 'bodyContent'})
+    if not content_div:
+        print("Main article content not found")
+        return None
+
+    article_content = []
+    # Loop through paragraphs and headers until reaching "Notes" or "References"
+    for element in content_div.find_all(['p', 'h2', 'h3']):
+        # Check for "Notes" or "References" section
+        if element.name == 'h2' and element.get_text(strip=True) in ["Notes", "References"]:
+            break
+        article_content.append(element.get_text(strip=True))
+
+    return article_content
+
+
+# URLs of the articles
+urls = [
+    "https://en.wikipedia.org/wiki/Stephen_Curry",
+    "https://en.wikipedia.org/wiki/Golden_State_Warriors"
+]
+
+# Fetch and display content for each article
+for url in urls:
+    print(f"\nContent from {url}:\n")
+    content = fetch_wikipedia_article_content(url)
+    if content:
+        for part in content:
+            print(part)

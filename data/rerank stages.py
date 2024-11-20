@@ -8,6 +8,7 @@ import numpy as np
 import re
 from concurrent.futures import ThreadPoolExecutor
 import os
+from rake_nltk import Rake
 
 # Set your OpenAI API key
 openai.api_key = os.environ.get("OPENAI_API_KEY")
@@ -266,6 +267,62 @@ def calculate_weighted_combined_score(query, retrieved_chunks, answer, retrieval
     return combined_score  ############################################################
 
 
+def calculate_factuality(chunk, answer):
+    """
+    Evaluates the factual accuracy of the answer based on the chunk.
+    This can use external tools, models, or checks for grounding in the retrieved context.
+
+    Args:
+        chunk (str): The retrieved document chunk.
+        answer (str): The generated answer.
+
+    Returns:
+        float: Factuality score (0 to 1, where 1 is highly factual).
+    """
+    # Example: Check if key facts in the answer are present in the chunk
+    # This can be extended with tools like FactCheckers or LLM-based verification
+    key_terms = extract_key_terms(answer)
+    match_count = sum(1 for term in key_terms if term in chunk)
+    factuality_score = match_count / len(key_terms) if key_terms else 0
+
+    return factuality_score
+
+def extract_key_terms_with_rake(text: str, top_k: int = 10) -> List[str]:
+    r = Rake()
+    r.extract_keywords_from_text(text)
+    return r.get_ranked_phrases()[:top_k]
+
+
+def calculate_novelty(chunk, all_chunks):
+    """
+    Evaluates the novelty of a chunk by comparing it to other chunks.
+    High similarity to other chunks reduces the novelty score.
+
+    Args:
+        chunk (str): The chunk to evaluate.
+        all_chunks (list): List of all chunks being considered.
+
+    Returns:
+        float: Novelty score (0 to 1, where 1 is highly novel).
+    """
+    from sklearn.metrics.pairwise import cosine_similarity
+    from sentence_transformers import SentenceTransformer
+
+    # Load the embedding model (use a lightweight one for efficiency)
+    model = SentenceTransformer("all-MiniLM-L6-v2")
+
+    # Embed the current chunk and all other chunks
+    chunk_embedding = model.encode(chunk, convert_to_tensor=True)
+    other_embeddings = [model.encode(other_chunk, convert_to_tensor=True) for other_chunk in all_chunks if other_chunk != chunk]
+
+    # Calculate similarity to other chunks
+    similarities = [cosine_similarity([chunk_embedding], [other_emb])[0][0] for other_emb in other_embeddings]
+
+    # Invert similarity to calculate novelty (1 - max similarity)
+    novelty_score = 1 - max(similarities) if similarities else 1
+
+    return novelty_score
+
 
 
 def main():
@@ -302,7 +359,8 @@ def main():
         results = list(executor.map(lambda chunk: process_chunk(chunk, question), top_chunks))
 
     # Re-rank chunks based on the combined score
-    reranked_chunks = []
+    # Step 1: Initial Re-Ranking Based on Combined Score
+    initial_reranked_chunks = []
     for i, (chunk, answer, faithfulness_score, scores) in enumerate(results):
         retrieval_score = retrieval_scores[i]
         answer_recall_score = calculate_answer_recall([chunk], answer)
@@ -314,13 +372,39 @@ def main():
         )
 
         # Store the chunk, answer, and combined score for re-ranking
-        reranked_chunks.append((chunk, answer, combined_score, scores))
+        initial_reranked_chunks.append((chunk, answer, combined_score, scores))
 
     # Sort the chunks based on the combined score (highest to lowest)
-    reranked_chunks.sort(key=lambda x: x[2], reverse=True)
+    initial_reranked_chunks.sort(key=lambda x: x[2], reverse=True)
 
-    # Select the best chunk and corresponding answer based on the re-ranked combined score
-    best_chunk, best_answer, best_combined_score, best_scores = reranked_chunks[0]
+    # Step 2: Diversity Filtering (Optional for Multi-Faceted Queries)
+    # Ensure the top chunks represent diverse subtopics to improve coverage
+    diverse_chunks = []
+    selected_topics = set()
+    for chunk, answer, combined_score, scores in initial_reranked_chunks:
+        topic = extract_topic(chunk)  # Implement a function to extract the topic or cluster
+        if topic not in selected_topics:
+            diverse_chunks.append((chunk, answer, combined_score, scores))
+            selected_topics.add(topic)
+
+    # Step 3: Second Pass Re-Ranking with Advanced Criteria
+    # Refine the reranking based on additional metrics (e.g., factuality, novelty)
+    final_reranked_chunks = []
+    for chunk, answer, combined_score, scores in diverse_chunks:
+        factuality_score = calculate_factuality(chunk, answer)  # Additional check for factual correctness
+        novelty_score = calculate_novelty(chunk, diverse_chunks)  # Penalize redundant chunks
+        adjusted_score = combined_score + 0.3 * factuality_score - 0.2 * novelty_score  # Weight adjustments
+
+        # Store the refined scores for final ranking
+        final_reranked_chunks.append((chunk, answer, adjusted_score, scores))
+
+    # Sort the chunks again based on the refined scores (highest to lowest)
+    final_reranked_chunks.sort(key=lambda x: x[2], reverse=True)
+
+    # Step 4: Select the Best Chunk and Answer After Multi-Pass Re-Ranking
+    best_chunk, best_answer, best_combined_score, best_scores = final_reranked_chunks[0]
+
+    # Return or use the best_chunk and best_answer as the final result
 
     # Calculate the time taken
     time_taken = time.time() - start_time

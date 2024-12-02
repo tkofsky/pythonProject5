@@ -269,79 +269,89 @@ def calculate_weighted_combined_score(query, retrieved_chunks, answer, retrieval
 
 
 def main():
-    url = "https://en.wikipedia.org/wiki/Stephen_Curry"
-    url = "https://en.wikipedia.org/wiki/Golden_State_Warriors"
-    context = load_webpage_content(url)
 
-    if not context:
-        print("Failed to retrieve content from the web page.")
-        return
 
-    question = "What religion is steph curry?"
-    question = "Who also scored 118 points in the first three games"
-    #question = "how many all-star games did he play by the time it was 2016 all-star weekend"
-    question = "in the playoffs against the houston rockets why did he miss some games"
-    #question = "In the Warriors' regular-season finale on April 13 against the Memphis Grizzlies how many points to cury score"
-    question = "in the  2014–15 season what changes to steve kerr implement"
-    #question = "After Davidson's loss against Kansas what did curry announce"
-    question = "what did the new logo on the uniforms look like"
-    chunks = split_text_by_sentences(context)
+    urls = ["https://en.wikipedia.org/wiki/Stephen_Curry", "https://www.cnn.com/2024/11/20/politics/doge-remote-work-federal-employees/index.html"]
+    for url in urls:
 
-    # Cache the question embedding
-    question_embedding = get_embeddings([question])[0]
 
-    # Rank chunks and select the top 5 most relevant chunks (initial retrieval ranking)
-    top_chunks, retrieval_scores = rank_chunks(chunks, question_embedding,top_k=5)
-    avg_retrieval_score = np.mean(retrieval_scores)
+        context = load_webpage_content(url)
 
-    # Start the timer before generating answer and scoring
-    start_time = time.time()
+        if not context:
+            print("Failed to retrieve content from the web page.")
+            return
 
-    # Parallelize chunk processing
-    with ThreadPoolExecutor() as executor:
-        results = list(executor.map(lambda chunk: process_chunk(chunk, question), top_chunks))
+        question = "What religion is steph curry?"
+        question = "Who also scored 118 points in the first three games"
+        #question = "how many all-star games did he play by the time it was 2016 all-star weekend"
+        question = "in the playoffs against the houston rockets why did he miss some games"
+        #question = "In the Warriors' regular-season finale on April 13 against the Memphis Grizzlies how many points to cury score"
+        question = "in the  2014–15 season what changes to steve kerr implement"
+        #question = "After Davidson's loss against Kansas what did curry announce"
+        question = "what was Robert Rowell role"
+        question = "how did the 2005 -06 season start"
+        question = "what are some reason that workers don't want to return to the office"
 
-    # Re-rank chunks based on the combined score
-    reranked_chunks = []
-    for i, (chunk, answer, faithfulness_score, scores) in enumerate(results):
-        retrieval_score = retrieval_scores[i]
-        answer_recall_score = calculate_answer_recall([chunk], answer)
-        perplexity = calculate_perplexity(answer)
+        chunks = split_text_by_sentences(context)
 
-        # Calculate the combined score
-        combined_score = calculate_weighted_combined_score(
-            question, [chunk], answer, retrieval_score, faithfulness_score, answer_recall_score, perplexity
+        # Cache the question embedding
+        question_embedding = get_embeddings([question])[0]
+
+        # Rank chunks and select the top 5 most relevant chunks (initial retrieval ranking)
+        top_chunks, retrieval_scores = rank_chunks(chunks, question_embedding,top_k=5)
+        avg_retrieval_score = np.mean(retrieval_scores)
+
+        # Start the timer before generating answer and scoring
+        start_time = time.time()
+
+        # Parallelize chunk processing
+        with ThreadPoolExecutor() as executor:
+            results = list(executor.map(lambda chunk: process_chunk(chunk, question), top_chunks))
+
+        # Re-rank chunks based on the combined score
+        reranked_chunks = []
+        for i, (chunk, answer, faithfulness_score, scores) in enumerate(results):
+            retrieval_score = retrieval_scores[i]
+            answer_recall_score = calculate_answer_recall([chunk], answer)
+            perplexity = calculate_perplexity(answer)
+
+            # Calculate the combined score
+            combined_score = calculate_weighted_combined_score(
+                question, [chunk], answer, retrieval_score, faithfulness_score, answer_recall_score, perplexity
+            )
+
+            # Store the chunk, answer, and combined score for re-ranking
+            reranked_chunks.append((chunk, answer, combined_score, scores))
+
+        # Sort the chunks based on the combined score (highest to lowest)
+        reranked_chunks.sort(key=lambda x: x[2], reverse=True)
+
+        # Select the best chunk and corresponding answer based on the re-ranked combined score
+        best_chunk, best_answer, best_combined_score, best_scores = reranked_chunks[0]
+
+        # Calculate the time taken
+        time_taken = time.time() - start_time
+
+        # Save the best question, answer, score, time taken, and additional scores to CSV
+        save_to_csv(question, best_answer, best_combined_score, time_taken, best_scores)
+        save_to_csv_more(
+            question, best_answer, best_combined_score, time_taken,
+            best_scores['faithfulness_score'], best_scores['recLL_score'], best_combined_score, perplexity
         )
 
-        # Store the chunk, answer, and combined score for re-ranking
-        reranked_chunks.append((chunk, answer, combined_score, scores))
+        # Display the best answer, corresponding chunk, and time taken
+        print(f"Best Chunk:\n{best_chunk}\n")
+        print(f"Best Answer: {best_answer}\n")
+        print(f"Best Combined Score: {best_combined_score:.2f}\n")
+        print(f"Faithfulness Score: {best_scores['faithfulness_score']:.2f}")
+        print(f"RecLL Score: {best_scores['recLL_score']:.2f}")
+        print(f"Coverage Score: {best_scores['coverage_score']:.2f}")
+        print(f"Diversity Score: {best_scores['diversity_score']:.2f}")
+        print(f"Perplexity: {perplexity:.2f}")
+        print(f"Time Taken: {time_taken:.2f} seconds")
 
-    # Sort the chunks based on the combined score (highest to lowest)
-    reranked_chunks.sort(key=lambda x: x[2], reverse=True)
-
-    # Select the best chunk and corresponding answer based on the re-ranked combined score
-    best_chunk, best_answer, best_combined_score, best_scores = reranked_chunks[0]
-
-    # Calculate the time taken
-    time_taken = time.time() - start_time
-
-    # Save the best question, answer, score, time taken, and additional scores to CSV
-    save_to_csv(question, best_answer, best_combined_score, time_taken, best_scores)
-    save_to_csv_more(
-        question, best_answer, best_combined_score, time_taken,
-        best_scores['faithfulness_score'], best_scores['recLL_score'], best_combined_score, perplexity
-    )
-
-    # Display the best answer, corresponding chunk, and time taken
-    print(f"Best Chunk:\n{best_chunk}\n")
-    print(f"Best Answer: {best_answer}\n")
-    print(f"Best Combined Score: {best_combined_score:.2f}\n")
-    print(f"Faithfulness Score: {best_scores['faithfulness_score']:.2f}")
-    print(f"RecLL Score: {best_scores['recLL_score']:.2f}")
-    print(f"Coverage Score: {best_scores['coverage_score']:.2f}")
-    print(f"Diversity Score: {best_scores['diversity_score']:.2f}")
-    print(f"Perplexity: {perplexity:.2f}")
-    print(f"Time Taken: {time_taken:.2f} seconds")
+        if best_combined_score >0.7:
+            break
 
 if __name__ == "__main__":
     # Add CSV header if file is created for the first time

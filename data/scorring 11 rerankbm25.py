@@ -302,24 +302,40 @@ def calculate_weighted_combined_score(query, retrieved_chunks, answer, retrieval
 
 def main():
     url = "https://en.wikipedia.org/wiki/Stephen_Curry"
+    #url = "https://en.wikipedia.org/wiki/Golden_State_Warriors"
+   # url = "https://en.wikipedia.org/wiki/Stephen_Curry"
+   # url = "https://en.wikipedia.org/wiki/New_York_City"
+    url = "https://www.cnn.com/2024/11/20/politics/doge-remote-work-federal-employees/index.html"
+    url = "https://www.cnbc.com/2024/09/24/despite-more-return-to-office-mandates-hybrid-and-remote-arent-dying.html"
     context = load_webpage_content(url)
 
     if not context:
         print("Failed to retrieve content from the web page.")
         return
 
-    question = "What religion is steph curry?"
-    question = "in the  2014–15 season what changes to steve kerr implement"
-    question = "After Davidson's loss against Kansas what did curry announce"
-    question = "in the playoffs against the houston rockets why did he miss some games"
-   # question = "were did curry's family movr to After Dell's retirement"
+    question = "What religion is steph curry?" #q1
+    question = "in the  2014–15 season what changes to steve kerr implement" #q2
+    question = "After Davidson's loss against Kansas what did curry announce" #q3
+    #question = "in the playoffs against the houston rockets why did he miss some games"#q4
+    question = "were did curry's family movr to After Dell's retirement"#q5
+    question = "how many points did he score in his first collegiate game"#q6
+    question = "what records do the warriores hold"#q7
+    question = "in the  2014–15 season what changes to steve kerr implement"#q8
+
+   # question = "in the  2014–15 season what changes to steve kerr implement" #q9
+    question = "in the 2008-09 season what happened to Ellis" #q10
+    question = "why did the warriors switch thier logo" #q11
+    question = "what did the new logo on the uniforms look like" #q12
+    question = "how did selecting Klay thompson effect the 2011-12 season"  # q12
+    question = "what are some of steph curry's strengths"
+    question = "what are some reason that workers don't want to return to the office"
     chunks = split_text_by_sentences(context)
 
     # Cache the question embedding
     question_embedding = get_embeddings([question])[0]
 
     # Rank chunks using both BM25 and embeddings
-    top_chunks, retrieval_scores = rank_chunks_with_bm25(chunks, question_embedding, question, top_k=10)
+    top_chunks, retrieval_scores = rank_chunks_with_bm25(chunks, question_embedding, question, top_k=4)
     avg_retrieval_score = np.mean(retrieval_scores)
 
     # Start the timer before generating answer and scoring

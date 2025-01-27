@@ -1,8 +1,5 @@
 """
-functional_prompt_bandit_ucb1_csv_dataset_shots_f1_real.py
 
-UCB1 bandit over prompt templates with 0/1/2/3-shot variants and mutations,
-cycling through examples in agent_dataset.json.
 Logs trials with timestamps, latency, and F1-style metrics against ground truth JSON.
 """
 

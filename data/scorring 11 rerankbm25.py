@@ -306,7 +306,7 @@ def main():
    # url = "https://en.wikipedia.org/wiki/Stephen_Curry"
    # url = "https://en.wikipedia.org/wiki/New_York_City"
     url = "https://www.cnn.com/2024/11/20/politics/doge-remote-work-federal-employees/index.html"
-    url = "https://www.cnbc.com/2024/09/24/despite-more-return-to-office-mandates-hybrid-and-remote-arent-dying.html"
+    #url = "https://www.cnbc.com/2024/09/24/despite-more-return-to-office-mandates-hybrid-and-remote-arent-dying.html"
     context = load_webpage_content(url)
 
     if not context:

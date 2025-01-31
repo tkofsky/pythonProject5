@@ -291,6 +291,8 @@ def main():
     question = "in the  2014–15 season what changes to steve kerr implement"
     question = "were did curry's family movr to After Dell's retirement"
     question = "what did the new logo on the uniforms look like"  # q12
+    question = "what are some reason that workers don't want to return to the office"
+
 
     chunks = split_text_by_sentences(context)
 

@@ -28,14 +28,14 @@ def pretty_print_docs(docs):
         )
     )
 
-def save_to_csv(question, answer, tottime, answerrank,tottimerank,filename="rerank.csv"):
+def save_to_csv(question, answer, tottime, cpu,answerrank,tottimerank,cpurank,filename="reranknew.csv"):
     """
     Saves the question, best answer, best score, and time taken into a CSV file.
     """
     try:
         with open(filename, 'a', newline='') as file:
             writer = csv.writer(file)
-            writer.writerow([question, answer, tottime, answerrank,tottimerank])
+            writer.writerow([question, answer, tottime, cpu,answerrank,tottimerank,cpurank])
         print(f"Results saved to {filename}")
     except Exception as e:
         print(f"Error writing to file: {e}")
@@ -64,10 +64,19 @@ embeddings = HuggingFaceBgeEmbeddings(
 )
 
 vectorstore = FAISS.from_documents(texts, embeddings)
-retriever = vectorstore.as_retriever(search_kwargs={"k": 20})
+retriever = vectorstore.as_retriever(search_kwargs={"k": 3})
 
 query = "According to Kelly and Williams what is ethics?"
 query = "whats is the comparisson between management and leadership accoring to kotter"
+
+query = "what did the The Industrial Revolution and the rise of the factory system cause"
+query = "what were some examples for production process imporvements along with technical innovation"
+query = "what do historians referr to the period which all these inventions occured"
+query = "what played a major role in the transformation in england and germany"
+query = "according to Taylor how can worker inefficiency be solved"
+query = "what do historians referr to the period which all these inventions occured"
+query = "According to Kelly and Williams what is ethics?"
+query = "According to Taylor how can inefficiency be solved"
 docs = retriever.get_relevant_documents(query)
 pretty_print_docs(docs)
 
@@ -89,6 +98,7 @@ end_time = time.process_time()
 print(f"CPU time used: {end_time - start_time} seconds")
 print(end - start)
 tottime = end-start
+cpu = end_time - start_time
 ####################### first withour reranker then (next) with reranker
 
 start = time.time()
@@ -105,9 +115,15 @@ pretty_print_docs(compressed_docs)
 qa = RetrievalQA.from_chain_type(llm=llm,
                                  chain_type="stuff",
                                  retriever=compression_retriever )
-
+start = time.time()
+start_time = time.process_time()
 print(qa.run(query=query))
 answerrank  = qa.run(query=query)
 end = time.time()
+end_time = time.process_time()
+print(f"CPU time used: {end_time - start_time} seconds")
+cpurank = end_time - start_time
+
+
 tottimerank = end - start
-save_to_csv(query, answer, tottime, answerrank,tottimerank)
+save_to_csv(query, answer, tottime, cpu,answerrank,tottimerank,cpurank)

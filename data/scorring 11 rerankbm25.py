@@ -284,7 +284,7 @@ def calculate_weighted_combined_score(query, retrieved_chunks, answer, retrieval
     generation faithfulness, answer recall, and perplexity with specified weights.
     """
     if weights is None:
-        weights = {'retrieval_weight': 0.25, 'faithfulness_weight': 0.25, 'recall_weight': 0.35, 'perplexity_weight': 0.15}
+        weights = {'retrieval_weight': 0.20, 'faithfulness_weight': 0.35, 'recall_weight': 0.35, 'perplexity_weight': 0.15}
 
     # Normalize perplexity (lower perplexity is better, so we invert it)
     normalized_perplexity = 1 / (perplexity + 1e-5)

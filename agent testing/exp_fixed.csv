@@ -1,0 +1,6 @@
+run_id,iter,arm_id,prompt_style,few_shot,temperature,two_pass,input_hash,model,tokens,latency_s,routing_mode,difficulty,plan_conf,escalated,routing_reason,two_pass_mode,f1_intent,f1_entities,f1_urgency,f1_constraints,f1_steps,reward,json_valid
+20251015_151434,0,reason_1p_T02_two,reason_hidden,1,0.2,True,c2e4784085eea21ccc80bb6cf421a45c,gpt-4o-mini,362,0.0,two_pass,0.45,0.4,1,override:verb_1p_T0_two;diff=0.45;plan_conf=0.40;escalate:reason_hidden,plan,1.0,0.923076923076923,1.0,1.0,0.0,0.2852938461538461,1
+20251015_151434,1,reason_1p_T02_two,reason_hidden,1,0.2,True,01e9fc445042d9a02af2d4a0c9d3a7d2,gpt-4o-mini,354,0.0009989738464355469,two_pass,0.4,0.4,1,override:verb_1p_T0_two;diff=0.40;plan_conf=0.40;escalate:reason_hidden,plan,0.0,0.0,0.0,0.0,0.0,-0.010629989738464355,1
+20251015_151434,2,min_0p_T0_one,schema_min,1,0.0,False,c96cc14cb353349e0dd481b26f34f532,gpt-4o-mini,234,0.0,one_pass,0.3,,0,diff=0.30,plan,0.0,0.0,1.0,0.0,0.0,0.04298,1
+20251015_151434,3,min_1p_T0_one,schema_min,1,0.0,False,6402531481afdcd25d4fbcc4d1971222,gpt-4o-mini,231,0.0,one_pass,0.3,,0,diff=0.30,plan,0.0,0.0,0.0,0.0,0.0,-0.00693,1
+20251015_151434,4,reason_1p_T02_two,reason_hidden,1,0.2,True,bf4df958c51b809955102320f79d8f11,gpt-4o-mini,366,0.0,two_pass,0.1,0.4,1,diff=0.10;plan_conf=0.40;escalate:reason_hidden,plan,0.0,0.0,1.0,0.0,0.0,0.03902,1

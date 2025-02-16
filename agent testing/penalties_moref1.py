@@ -461,14 +461,7 @@ def main():
             shots,
             result["prompt_length"],
             result["reward_overall"],
-            result["F1_intent"],
-            result["F1_entities"],
-            result["F1_constraints"],
-            result["F1_urgency"],
-            result["F1_steps"],
-            result["latency_sec"],
-            result["error"],
-            result["raw_output"],
+
         ])
 
         print(

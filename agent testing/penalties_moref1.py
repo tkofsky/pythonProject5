@@ -278,10 +278,10 @@ def f1_for_steps(pred_steps_val: Any, true_steps_val: Any, threshold: float = 0.
 
 MISSING_KEY_PENALTIES = {
     "intent": 0.20,
-    "entities": 0.15,
-    "constraints": 0.10,
-    "urgency": 0.10,
-    "steps": 0.20,
+    "entities": 0.25,
+    "constraints": 0.20,
+    "urgency": 0.15,
+    "steps": 0.25,
 }
 
 
@@ -461,7 +461,14 @@ def main():
             shots,
             result["prompt_length"],
             result["reward_overall"],
-
+            result["F1_intent"],
+            result["F1_entities"],
+            result["F1_constraints"],
+            result["F1_urgency"],
+            result["F1_steps"],
+            result["latency_sec"],
+            result["error"],
+            result["raw_output"],
         ])
 
         print(

@@ -244,11 +244,7 @@ def main():
 
     question = "What religion is steph curry?"
     question = "In Game 5 of the Conference Semifinals against the Memphis Grizzlies, what did curry become?"
-    question = "After Davidson's loss against Kansas what did curry announce"
-    question = "in the  2014–15 season what changes to steve kerr implement"
-    question = "in the 2008-09 season what happened to Ellis"
-    question = "were did curry's family movr to After Dell's retirement"
-    question = "what did the new logo on the uniforms look like"
+
     chunks = split_text_by_sentences(context)
 
     # Cache the question embedding

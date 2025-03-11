@@ -120,8 +120,7 @@ start_time = time.process_time()
 print(qa.run(query=query))
 answerrank  = qa.run(query=query)
 end = time.time()
+end_time = time.process_time()
+print(f"CPU time used: {end_time - start_time} seconds")
 
-
-
-tottimerank = end - start
 save_to_csv(query, answer, tottime, cpu,answerrank,tottimerank,cpurank)

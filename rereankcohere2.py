@@ -96,9 +96,7 @@ answer = qa.run(query=query)
 end = time.time()
 end_time = time.process_time()
 print(f"CPU time used: {end_time - start_time} seconds")
-print(end - start)
-tottime = end-start
-cpu = end_time - start_time
+
 ####################### first withour reranker then (next) with reranker
 
 start = time.time()
@@ -122,5 +120,8 @@ answerrank  = qa.run(query=query)
 end = time.time()
 end_time = time.process_time()
 print(f"CPU time used: {end_time - start_time} seconds")
+cpurank = end_time - start_time
 
+
+tottimerank = end - start
 save_to_csv(query, answer, tottime, cpu,answerrank,tottimerank,cpurank)

@@ -17,6 +17,30 @@ model = SentenceTransformer('sentence-transformers/msmarco-distilbert-base-v4') 
 
 
 
+def process_chunk_without_groundtruth(chunk, question, retrieved_content):
+    """Process each chunk without ground truth: generate answer, and score it based on semantic similarity."""
+    answer = generate_answer(chunk, question)
+
+    # Semantic similarity to query and retrieved content
+    similarity_to_query = calculate_similarity_to_query(answer, question)
+    similarity_to_retrieved = calculate_similarity_to_retrieved_content(answer, retrieved_content)
+
+    # Faithfulness to the retrieved content
+    faithfulness_score = calculate_faithfulness_to_retrieved_content(retrieved_content, answer)
+
+    # Combined score
+    combined_score = calculate_combined_score_without_groundtruth(answer, question, retrieved_content)
+
+    return {
+        "answer": answer,
+        "similarity_to_query": similarity_to_query,
+        "similarity_to_retrieved": similarity_to_retrieved,
+        "faithfulness_score": faithfulness_score,
+        "combined_score": combined_score
+    }
+
+
+
 
 
 import torch

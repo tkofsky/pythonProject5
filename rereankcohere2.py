@@ -96,7 +96,9 @@ answer = qa.run(query=query)
 end = time.time()
 end_time = time.process_time()
 print(f"CPU time used: {end_time - start_time} seconds")
-
+print(end - start)
+tottime = end-start
+cpu = end_time - start_time
 ####################### first withour reranker then (next) with reranker
 
 start = time.time()

@@ -1,7 +1,7 @@
 """
-bandit_cost_aware_ucb.py
+bandit_cost_aware_ucb_temp.py
 
-UCB1 bandit over (shots x passes) combinations using 1-pass and 2-pass prompting.
+UCB1 bandit over (shots x passes x temperature) combinations.
 Cost-aware: bandit optimizes adjusted_reward = reward_overall - COST_LAMBDA * latency_sec.
 """
 
@@ -21,29 +21,36 @@ client = OpenAI(api_key=api_key)
 
 # --------------------- Config ----------------------------
 
-MODEL_NAME = "gpt-4.1-mini"
-RANDOM_SEED = 123
-RUN_ID = str(uuid.uuid4())
+MODEL_NAME   = "gpt-4.1-mini"
+RANDOM_SEED  = 123
+RUN_ID       = str(uuid.uuid4())
 
-UCB_C = 1.0
-N_TRIALS = 120
+UCB_C        = 1.0
+N_TRIALS     = 160
 
-# cost tradeoff: per second of latency
-COST_LAMBDA = 0.3
+# cost tradeoff per second of latency
+COST_LAMBDA  = 0.3
 
 random.seed(RANDOM_SEED)
 
-# ---- Arms: (shots x passes) ----
+# ---- Arms: (shots x passes x temperature) ----
 
-SHOT_VALUES = [0, 1, 2, 3]
-PASS_VALUES = [1, 2]
-ARMS = [{"shots": s, "passes": p} for p in PASS_VALUES for s in SHOT_VALUES]
+SHOT_VALUES        = [0, 1, 2, 3]
+PASS_VALUES        = [1, 2]           # 1-pass or 2-pass
+TEMPERATURE_VALUES = [0.0, 0.3, 0.7]
+
+ARMS = [
+    {"shots": s, "passes": p, "temperature": t}
+    for p in PASS_VALUES
+    for s in SHOT_VALUES
+    for t in TEMPERATURE_VALUES
+]
 N_ARMS = len(ARMS)
 
 # ---- CSV paths ----
 
-CSV_PATH_TRIALS  = "bandit_cost_aware_trials.csv"
-CSV_PATH_SUMMARY = "bandit_cost_aware_summary.csv"
+CSV_PATH_TRIALS  = "bandit_cost_aware_temp_trials.csv"
+CSV_PATH_SUMMARY = "bandit_cost_aware_temp_summary.csv"
 
 
 # ---------------- FEW-SHOT DATA --------------------------
@@ -133,7 +140,7 @@ def init_csvs():
             "run_id", "trial", "timestamp",
             "model", "ucb_c", "cost_lambda", "seed",
             "task_index", "task_type",
-            "arm", "shots", "passes",
+            "arm", "shots", "passes", "temperature",
             "prompt_length",
             "reward_overall",
             "adj_reward",
@@ -146,7 +153,7 @@ def init_csvs():
     with open(CSV_PATH_SUMMARY, "w", newline="", encoding="utf-8") as f:
         csv.writer(f).writerow([
             "run_id", "model", "ucb_c", "cost_lambda", "seed",
-            "arm", "shots", "passes",
+            "arm", "shots", "passes", "temperature",
             "final_q_adj",      # mean adjusted reward
             "mean_raw_reward",  # mean raw reward_overall
             "mean_latency_sec",
@@ -316,13 +323,13 @@ def make_refine_prompt(task_i: int, draft_json: str) -> str:
 
 # --------------------- Model calls -----------------------
 
-def call_api(prompt: str) -> Dict[str, Any]:
+def call_api(prompt: str, temperature: float) -> Dict[str, Any]:
     start = time.time()
     try:
         resp = client.chat.completions.create(
             model=MODEL_NAME,
             messages=[{"role": "user", "content": prompt}],
-            temperature=0.0,
+            temperature=temperature,
             max_tokens=500,
         )
         latency = time.time() - start
@@ -333,11 +340,11 @@ def call_api(prompt: str) -> Dict[str, Any]:
         return dict(output="", latency=latency, error=str(e))
 
 
-def run_trial(passes: int, shots: int, task_i: int) -> Dict[str, Any]:
+def run_trial(passes: int, shots: int, temperature: float, task_i: int) -> Dict[str, Any]:
     true_json = FEW_SHOT[task_i]["output"]
 
     p1 = make_prompt(task_i, shots)
-    r1 = call_api(p1)
+    r1 = call_api(p1, temperature)
 
     if passes == 1 or r1["error"]:
         final_out = r1["output"]
@@ -346,7 +353,7 @@ def run_trial(passes: int, shots: int, task_i: int) -> Dict[str, Any]:
         err = r1["error"]
     else:
         p2 = make_refine_prompt(task_i, r1["output"])
-        r2 = call_api(p2)
+        r2 = call_api(p2, temperature)
         final_out = r2["output"]
         lat = r1["latency"] + r2["latency"]
         plen = len(p1) + len(p2)
@@ -421,11 +428,12 @@ def main():
 
         arm = pick_arm(q_adj, pulls, t)
         cfg = ARMS[arm]
-        shots = cfg["shots"]
-        passes = cfg["passes"]
+        shots       = cfg["shots"]
+        passes      = cfg["passes"]
+        temperature = cfg["temperature"]
 
         ts = datetime.utcnow().isoformat()
-        res = run_trial(passes, shots, task_i)
+        res = run_trial(passes, shots, temperature, task_i)
 
         pulls[arm] += 1
         lr = 1 / pulls[arm]
@@ -438,7 +446,7 @@ def main():
             RUN_ID, t, ts,
             MODEL_NAME, UCB_C, COST_LAMBDA, RANDOM_SEED,
             task_i, FEW_SHOT[task_i]["task_type"],
-            arm, shots, passes,
+            arm, shots, passes, temperature,
             res["prompt_length"],
             res["reward_overall"],
             res["adj_reward"],
@@ -450,7 +458,7 @@ def main():
         ])
 
         print(
-            f"[{t:03d}] arm={arm} shots={shots} passes={passes} "
+            f"[{t:03d}] arm={arm} shots={shots} passes={passes} temp={temperature} "
             f"rawR={res['reward_overall']:.3f} adjR={res['adj_reward']:.3f} "
             f"Qadj={q_adj[arm]:.3f} n={pulls[arm]} lat={res['latency_sec']:.2f}s"
         )
@@ -472,7 +480,7 @@ def main():
 
         append(CSV_PATH_SUMMARY, [
             RUN_ID, MODEL_NAME, UCB_C, COST_LAMBDA, RANDOM_SEED,
-            i, cfg["shots"], cfg["passes"],
+            i, cfg["shots"], cfg["passes"], cfg["temperature"],
             q_adj[i],
             mean_raw,
             mean_lat,
@@ -487,7 +495,7 @@ def main():
     print("\nFinal cost-aware Q-values (adjusted):")
     for i, cfg in enumerate(ARMS):
         print(
-            f" arm={i} shots={cfg['shots']} passes={cfg['passes']} "
+            f" arm={i} shots={cfg['shots']} passes={cfg['passes']} temp={cfg['temperature']} "
             f"Qadj={q_adj[i]:.3f} pulls={pulls[i]}"
         )
 

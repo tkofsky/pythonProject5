@@ -333,7 +333,19 @@ def f1_for_steps(pred_steps_val: Any, true_steps_val: Any, threshold: float = 0.
     matched_true = set()
     matches = 0
 
-    #no loop
+    for p_tok in pred_tokens:
+        best_score = 0.0
+        best_index: Optional[int] = None
+        for i, t_tok in enumerate(true_tokens):
+            if i in matched_true:
+                continue
+            sim = jaccard_similarity(p_tok, t_tok)
+            if sim > best_score:
+                best_score = sim
+                best_index = i
+        if best_index is not None and best_score >= threshold:
+            matches += 1
+            matched_true.add(best_index)
 
     precision = matches / len(pred_tokens) if pred_tokens else 0.0
     recall = matches / len(true_tokens) if true_tokens else 0.0
@@ -423,7 +435,7 @@ def build_refine_prompt(task_index: int, draft_json: str) -> str:
         BASE_PROMPT
         + "\n\nHere is a draft plan JSON for this request:\n"
         + f"{draft_json}\n\n"
-        + "Clean up structure, fix missing keys if possible, and return final JSON only."
+        + ""
         + f"\n\nOriginal request:\n{task['input']}"
     )
     return prompt

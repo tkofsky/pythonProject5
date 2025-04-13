@@ -1,7 +1,7 @@
 """
-bandit_cost_aware_ucb_temp.py
+bandit_cost_aware_ucb_temp_multi_prompt.py
 
-UCB1 bandit over (shots x passes x temperature) combinations.
+UCB1 bandit over (prompt_template x shots x passes x temperature) combinations.
 Cost-aware: bandit optimizes adjusted_reward = reward_overall - COST_LAMBDA * latency_sec.
 """
 
@@ -26,40 +26,67 @@ RANDOM_SEED  = 123
 RUN_ID       = str(uuid.uuid4())
 
 UCB_C        = 1.0
-N_TRIALS     = 160
+N_TRIALS     = 200
 
 # cost tradeoff per second of latency
 COST_LAMBDA  = 0.3
 
 random.seed(RANDOM_SEED)
 
-# ---- Arms: (shots x passes x temperature) ----
+
+# ------------------ Prompt templates ---------------------
+
+PROMPT_TEMPLATES = [
+    {
+        "id": "schema_strict",
+        "text": (
+            "Extract a structured JSON plan from the request.\n"
+            "Return strict JSON only with keys: intent, entities, constraints, urgency, steps.\n"
+            "No prose, no explanations."
+        ),
+    },
+    {
+        "id": "schema_guided",
+        "text": (
+            "Plan the task as JSON.\n"
+            "Keys: intent, entities, constraints, urgency, steps.\n"
+            "Fill missing fields with null, keep JSON valid, no commentary."
+        ),
+    },
+    {
+        "id": "minimal",
+        "text": (
+            "Return only JSON with keys: intent, entities, constraints, urgency, steps.\n"
+            "Be concise, avoid extra nesting."
+        ),
+    },
+]
+
+
+def get_template_text(template_id: str) -> str:
+    for t in PROMPT_TEMPLATES:
+        if t["id"] == template_id:
+            return t["text"]
+    raise ValueError(f"Unknown template_id: {template_id}")
+
+
+# ------------------ Arms: template x shots x passes x temp -----------------
 
 SHOT_VALUES        = [0, 1, 2, 3]
 PASS_VALUES        = [1, 2]           # 1-pass or 2-pass
 TEMPERATURE_VALUES = [0.0, 0.3, 0.7]
 
-ARMS = [
-    {"shots": s, "passes": p, "temperature": t}
+ARMS: List[Dict[str, Any]] = [
+    {"template_id": tpl["id"], "shots": s, "passes": p, "temperature": t}
+    for tpl in PROMPT_TEMPLATES
     for p in PASS_VALUES
     for s in SHOT_VALUES
     for t in TEMPERATURE_VALUES
 ]
 N_ARMS = len(ARMS)
 
-# ---- CSV paths ----
-
-CSV_PATH_TRIALS  = "bandit_cost_aware_temp_trials.csv"
-CSV_PATH_SUMMARY = "bandit_cost_aware_temp_summary.csv"
-
 
 # ---------------- FEW-SHOT DATA --------------------------
-
-BASE_PROMPT = (
-    "Extract a structured JSON plan from the user request.\n"
-    "Return strict JSON only with keys: intent, entities, constraints, urgency, steps.\n"
-    "No extra text."
-)
 
 FEW_SHOT = [
     {
@@ -134,13 +161,18 @@ FEW_SHOT = [
 
 # -------------------- CSV helpers ------------------------
 
+CSV_PATH_TRIALS  = "bandit_multi_prompt_trials.csv"
+CSV_PATH_SUMMARY = "bandit_multi_prompt_summary.csv"
+
+
 def init_csvs():
     with open(CSV_PATH_TRIALS, "w", newline="", encoding="utf-8") as f:
         csv.writer(f).writerow([
             "run_id", "trial", "timestamp",
             "model", "ucb_c", "cost_lambda", "seed",
             "task_index", "task_type",
-            "arm", "shots", "passes", "temperature",
+            "arm",
+            "template_id", "shots", "passes", "temperature",
             "prompt_length",
             "reward_overall",
             "adj_reward",
@@ -153,7 +185,8 @@ def init_csvs():
     with open(CSV_PATH_SUMMARY, "w", newline="", encoding="utf-8") as f:
         csv.writer(f).writerow([
             "run_id", "model", "ucb_c", "cost_lambda", "seed",
-            "arm", "shots", "passes", "temperature",
+            "arm",
+            "template_id", "shots", "passes", "temperature",
             "final_q_adj",      # mean adjusted reward
             "mean_raw_reward",  # mean raw reward_overall
             "mean_latency_sec",
@@ -171,8 +204,10 @@ def append(path: str, row: list):
 
 STEP_TOKEN_RE = re.compile(r"[A-Za-z0-9]+")
 
+
 def flatten(v: Any) -> List[str]:
     out: List[str] = []
+
     def walk(x: Any):
         if x is None:
             return
@@ -186,8 +221,10 @@ def flatten(v: Any) -> List[str]:
                 walk(e)
         else:
             out.append(str(x).lower().strip())
+
     walk(v)
     return list(set(out))
+
 
 def f1_items(pred: List[str], truth: List[str]) -> float:
     p, t = set(pred), set(truth)
@@ -199,8 +236,9 @@ def f1_items(pred: List[str], truth: List[str]) -> float:
     if inter == 0:
         return 0.0
     prec = inter / len(p)
-    rec  = inter / len(t)
+    rec = inter / len(t)
     return 2 * prec * rec / (prec + rec) if prec + rec > 0 else 0.0
+
 
 def jaccard(a: List[str], b: List[str]) -> float:
     a, b = set(a), set(b)
@@ -210,8 +248,10 @@ def jaccard(a: List[str], b: List[str]) -> float:
         return 0.0
     return len(a & b) / len(a | b)
 
+
 def norm_step(x: Any) -> List[str]:
     return STEP_TOKEN_RE.findall(str(x).lower())
+
 
 def f1_steps(pred_steps_val: Any, true_steps_val: Any) -> float:
     if not isinstance(true_steps_val, list):
@@ -249,7 +289,7 @@ def f1_steps(pred_steps_val: Any, true_steps_val: Any) -> float:
             hits += 1
 
     prec = hits / len(pred_tok) if pred_tok else 0.0
-    rec  = hits / len(true_tok) if true_tok else 0.0
+    rec = hits / len(true_tok) if true_tok else 0.0
     return 2 * prec * rec / (prec + rec) if prec + rec > 0 else 0.0
 
 
@@ -269,12 +309,12 @@ def score(pred: Dict[str, Any], truth: Dict[str, Any]) -> Dict[str, float]:
         f_con = f1_items(flatten(pred.get("constraints")), flatten(truth.get("constraints")))
         f_urg = f1_items(flatten(pred.get("urgency")),     flatten(truth.get("urgency")))
         f_stp = f1_steps(pred.get("steps"), truth.get("steps"))
-        base  = (f_int + f_ent + f_con + f_urg + f_stp) / 5
+        base = (f_int + f_ent + f_con + f_urg + f_stp) / 5
     except Exception:
         return dict(
             reward_overall=0.0,
             F1_intent=0.0, F1_entities=0.0,
-            F1_constraints=0.0, F1_urgency=0.0, F1_steps=0.0
+            F1_constraints=0.0, F1_urgency=0.0, F1_steps=0.0,
         )
 
     penalty = sum(w for k, w in MISSING_PEN.items() if k not in pred)
@@ -289,14 +329,15 @@ def score(pred: Dict[str, Any], truth: Dict[str, Any]) -> Dict[str, float]:
 
 # ------------------ Prompt building ----------------------
 
-def make_prompt(task_i: int, shots: int) -> str:
+def make_prompt(template_id: str, task_i: int, shots: int) -> str:
     task = FEW_SHOT[task_i]
+    base_text = get_template_text(template_id)
 
     others = [i for i in range(len(FEW_SHOT)) if i != task_i]
     random.shuffle(others)
     demos = others[:shots]
 
-    parts = [BASE_PROMPT]
+    parts = [base_text]
     for j in demos:
         ex = FEW_SHOT[j]
         parts.append(
@@ -309,10 +350,11 @@ def make_prompt(task_i: int, shots: int) -> str:
     return "\n\n".join(parts)
 
 
-def make_refine_prompt(task_i: int, draft_json: str) -> str:
+def make_refine_prompt(template_id: str, task_i: int, draft_json: str) -> str:
     task = FEW_SHOT[task_i]
+    base_text = get_template_text(template_id)
     return (
-        BASE_PROMPT
+        base_text
         + "\nDraft JSON:\n"
         + draft_json
         + "\nClean up structure, fill missing keys if possible, return JSON only.\n\n"
@@ -340,10 +382,15 @@ def call_api(prompt: str, temperature: float) -> Dict[str, Any]:
         return dict(output="", latency=latency, error=str(e))
 
 
-def run_trial(passes: int, shots: int, temperature: float, task_i: int) -> Dict[str, Any]:
+def run_trial(cfg: Dict[str, Any], task_i: int) -> Dict[str, Any]:
+    template_id = cfg["template_id"]
+    passes      = cfg["passes"]
+    shots       = cfg["shots"]
+    temperature = cfg["temperature"]
+
     true_json = FEW_SHOT[task_i]["output"]
 
-    p1 = make_prompt(task_i, shots)
+    p1 = make_prompt(template_id, task_i, shots)
     r1 = call_api(p1, temperature)
 
     if passes == 1 or r1["error"]:
@@ -352,7 +399,7 @@ def run_trial(passes: int, shots: int, temperature: float, task_i: int) -> Dict[
         plen = len(p1)
         err = r1["error"]
     else:
-        p2 = make_refine_prompt(task_i, r1["output"])
+        p2 = make_refine_prompt(template_id, task_i, r1["output"])
         r2 = call_api(p2, temperature)
         final_out = r2["output"]
         lat = r1["latency"] + r2["latency"]
@@ -364,7 +411,7 @@ def run_trial(passes: int, shots: int, temperature: float, task_i: int) -> Dict[
         sc = dict(
             reward_overall=0.0,
             F1_intent=0.0, F1_entities=0.0,
-            F1_constraints=0.0, F1_urgency=0.0, F1_steps=0.0
+            F1_constraints=0.0, F1_urgency=0.0, F1_steps=0.0,
         )
     else:
         try:
@@ -377,7 +424,7 @@ def run_trial(passes: int, shots: int, temperature: float, task_i: int) -> Dict[
             sc = dict(
                 reward_overall=0.0,
                 F1_intent=0.0, F1_entities=0.0,
-                F1_constraints=0.0, F1_urgency=0.0, F1_steps=0.0
+                F1_constraints=0.0, F1_urgency=0.0, F1_steps=0.0,
             )
             raw_reward = 0.0
 
@@ -428,12 +475,9 @@ def main():
 
         arm = pick_arm(q_adj, pulls, t)
         cfg = ARMS[arm]
-        shots       = cfg["shots"]
-        passes      = cfg["passes"]
-        temperature = cfg["temperature"]
 
         ts = datetime.utcnow().isoformat()
-        res = run_trial(passes, shots, temperature, task_i)
+        res = run_trial(cfg, task_i)
 
         pulls[arm] += 1
         lr = 1 / pulls[arm]
@@ -446,7 +490,8 @@ def main():
             RUN_ID, t, ts,
             MODEL_NAME, UCB_C, COST_LAMBDA, RANDOM_SEED,
             task_i, FEW_SHOT[task_i]["task_type"],
-            arm, shots, passes, temperature,
+            arm,
+            cfg["template_id"], cfg["shots"], cfg["passes"], cfg["temperature"],
             res["prompt_length"],
             res["reward_overall"],
             res["adj_reward"],
@@ -458,7 +503,8 @@ def main():
         ])
 
         print(
-            f"[{t:03d}] arm={arm} shots={shots} passes={passes} temp={temperature} "
+            f"[{t:03d}] arm={arm} tpl={cfg['template_id']} "
+            f"shots={cfg['shots']} passes={cfg['passes']} temp={cfg['temperature']} "
             f"rawR={res['reward_overall']:.3f} adjR={res['adj_reward']:.3f} "
             f"Qadj={q_adj[arm]:.3f} n={pulls[arm]} lat={res['latency_sec']:.2f}s"
         )
@@ -480,7 +526,8 @@ def main():
 
         append(CSV_PATH_SUMMARY, [
             RUN_ID, MODEL_NAME, UCB_C, COST_LAMBDA, RANDOM_SEED,
-            i, cfg["shots"], cfg["passes"], cfg["temperature"],
+            i,
+            cfg["template_id"], cfg["shots"], cfg["passes"], cfg["temperature"],
             q_adj[i],
             mean_raw,
             mean_lat,
@@ -495,7 +542,8 @@ def main():
     print("\nFinal cost-aware Q-values (adjusted):")
     for i, cfg in enumerate(ARMS):
         print(
-            f" arm={i} shots={cfg['shots']} passes={cfg['passes']} temp={cfg['temperature']} "
+            f" arm={i} tpl={cfg['template_id']} shots={cfg['shots']} "
+            f"passes={cfg['passes']} temp={cfg['temperature']} "
             f"Qadj={q_adj[i]:.3f} pulls={pulls[i]}"
         )
 

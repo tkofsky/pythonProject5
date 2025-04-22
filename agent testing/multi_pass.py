@@ -437,7 +437,7 @@ def run_trial(cfg: Dict[str, Any], task_i: int) -> Dict[str, Any]:
         raw_output=final_out,
         reward_overall=raw_reward,
         adj_reward=adj_reward,
-        **{k: sc[k] for k in ["F1_intent", "F1_entities", "F1_constraints", "F1_urgency", "F1_steps"]},
+        **{k: sc[k] for k in ["F1_steps"]},
     )
 
 

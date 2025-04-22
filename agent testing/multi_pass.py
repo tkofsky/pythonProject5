@@ -448,14 +448,7 @@ def pick_arm(q_adj: List[float], pulls: List[int], t: int) -> int:
         if pulls[i] == 0:
             return i
 
-    best_val = -1e9
-    best_idx = 0
-    for i in range(N_ARMS):
-        bonus = UCB_C * math.sqrt(2.0 * math.log(t) / pulls[i])
-        val = q_adj[i] + bonus
-        if val > best_val:
-            best_val = val
-            best_idx = i
+
     return best_idx
 
 

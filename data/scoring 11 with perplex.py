@@ -282,7 +282,16 @@ def main():
     question = "in the playoffs against the houston rockets what injury did curry have"
     question = "In the Warriors' regular-season finale on April 13 against the Memphis Grizzlies"
     question  = "what did head coach Bob McKillop say about curry"
-
+    question = "in the  2014–15 season what changes to steve kerr implement"
+    question = "After Davidson's loss against Kansas what did curry announce"
+    question = "were did curry's family move to After Dell's retirement"
+    question = "how many points did he score in his first collegiate game"
+    question = "what records do the warriores hold"
+    question = "What religion is steph curry?"
+    question = "in the  2014–15 season what changes to steve kerr implement"
+    question = "were did curry's family movr to After Dell's retirement"
+    question = "what did the new logo on the uniforms look like"  # q12
+    question = "what are some reason that workers don't want to return to the office"
 
 
     chunks = split_text_by_sentences(context)

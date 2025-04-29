@@ -72,12 +72,7 @@ query = "whats is the comparisson between management and leadership accoring to 
 query = "what did the The Industrial Revolution and the rise of the factory system cause"
 query = "what were some examples for production process imporvements along with technical innovation"
 query = "what do historians referr to the period which all these inventions occured"
-query = "what played a major role in the transformation in england and germany"
-query = "according to Taylor how can worker inefficiency be solved"
-query = "what do historians referr to the period which all these inventions occured"
-query = "According to Kelly and Williams what is ethics?"
-query = "According to Taylor how can inefficiency be solved"
-docs = retriever.get_relevant_documents(query)
+
 pretty_print_docs(docs)
 
 #

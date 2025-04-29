@@ -36,7 +36,7 @@ def process_chunk_without_groundtruth(chunk, question, retrieved_content):
         "similarity_to_query": similarity_to_query,
         "similarity_to_retrieved": similarity_to_retrieved,
         "faithfulness_score": faithfulness_score,
-
+        "combined_score": combined_score
     }
 
 

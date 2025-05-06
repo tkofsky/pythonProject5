@@ -320,7 +320,7 @@ def main():
     reranked_chunks.sort(key=lambda x: x[2], reverse=True)
 
     # Select the best chunk and corresponding answer based on the re-ranked combined score
-    best_chunk, best_answer, best_combined_score, best_scores = reranked_chunks[0]
+    newchunk,best_chunk, best_answer, best_combined_score, best_scores = reranked_chunks[0]
 
     # Calculate the time taken
     time_taken = time.time() - start_time

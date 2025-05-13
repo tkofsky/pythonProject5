@@ -1,9 +1,9 @@
 """
-bandit_multi_prompt_tokens.py
+bandit_multi_prompt_tokens_grouped.py
 
 UCB1 bandit over (prompt_template x shots x passes x temperature) combinations.
 Cost-aware: adj_reward = reward_overall - COST_LAMBDA * latency_sec.
-Logs token usage (input/output/total) for each trial.
+Logs token usage and adds grouped summaries by shots and passes.
 """
 
 import os, json, random, time, csv, uuid, re, math
@@ -162,6 +162,7 @@ FEW_SHOT = [
 
 CSV_PATH_TRIALS  = "bandit_multi_prompt_tokens_trials.csv"
 CSV_PATH_SUMMARY = "bandit_multi_prompt_tokens_summary.csv"
+CSV_PATH_GROUPS  = "bandit_multi_prompt_tokens_groups.csv"
 
 
 def init_csvs():
@@ -195,6 +196,20 @@ def init_csvs():
             "mean_total_tokens",
             "pulls", "pull_freq",
             "lcb", "ucb", "bandwidth", "converged",
+        ])
+
+    with open(CSV_PATH_GROUPS, "w", newline="", encoding="utf-8") as f:
+        csv.writer(f).writerow([
+            "run_id", "model", "ucb_c", "cost_lambda", "seed",
+            "group_type",          # "shots" or "passes"
+            "group_value",         # shots value or passes value
+            "final_q_adj_weighted",
+            "mean_raw_reward_weighted",
+            "mean_latency_sec_weighted",
+            "mean_total_tokens_weighted",
+            "total_pulls",
+            "pull_freq",
+            "n_arms_in_group",
         ])
 
 
@@ -422,7 +437,6 @@ def run_trial(cfg: Dict[str, Any], task_i: int) -> Dict[str, Any]:
     total_in_tokens = r1["input_tokens"]
     total_out_tokens = r1["output_tokens"]
     err = r1["error"]
-
     final_out = r1["output"]
 
     if passes == 2 and not err:
@@ -493,6 +507,61 @@ def pick_arm(q_adj: List[float], pulls: List[int], t: int) -> int:
     return best_idx
 
 
+# ---------------------- GROUP SUMMARY --------------------
+
+def write_group_summaries(
+    q_adj: List[float],
+    pulls: List[int],
+    sum_raw_reward: List[float],
+    sum_latency: List[float],
+    sum_total_tok: List[float],
+):
+    total_trials = sum(pulls)
+
+    # by shots
+    groups = {
+        ("shots", s): [] for s in SHOT_VALUES
+    }
+    # by passes
+    for p in PASS_VALUES:
+        groups[("passes", p)] = []
+
+    for i, cfg in enumerate(ARMS):
+        s = cfg["shots"]
+        p = cfg["passes"]
+        groups[("shots", s)].append(i)
+        groups[("passes", p)].append(i)
+
+    for (gtype, gval), arm_indices in groups.items():
+        total_pulls = sum(pulls[i] for i in arm_indices)
+        if total_pulls == 0:
+            continue
+
+        sum_adj = sum(q_adj[i] * pulls[i] for i in arm_indices)
+        sum_raw = sum(sum_raw_reward[i] for i in arm_indices)
+        sum_lat = sum(sum_latency[i] for i in arm_indices)
+        sum_tok = sum(sum_total_tok[i] for i in arm_indices)
+
+        q_adj_w = sum_adj / total_pulls
+        mean_raw_w = sum_raw / total_pulls
+        mean_lat_w = sum_lat / total_pulls
+        mean_tok_w = sum_tok / total_pulls
+
+        pull_freq = total_pulls / total_trials if total_trials > 0 else 0.0
+
+        append(CSV_PATH_GROUPS, [
+            RUN_ID, MODEL_NAME, UCB_C, COST_LAMBDA, RANDOM_SEED,
+            gtype, gval,
+            q_adj_w,
+            mean_raw_w,
+            mean_lat_w,
+            mean_tok_w,
+            total_pulls,
+            pull_freq,
+            len(arm_indices),
+        ])
+
+
 # ------------------------ MAIN ---------------------------
 
 def main():
@@ -549,6 +618,7 @@ def main():
             f"lat={res['latency_sec']:.2f}s toks={res['total_tokens']}"
         )
 
+    # per-arm summary
     for i, cfg in enumerate(ARMS):
         if pulls[i] > 0:
             bonus = UCB_C * math.sqrt(2.0 * math.log(N_TRIALS) / pulls[i])
@@ -581,6 +651,9 @@ def main():
             bw,
             conv,
         ])
+
+    # grouped summaries by shots and passes
+    write_group_summaries(q_adj, pulls, sum_raw_reward, sum_latency, sum_total_tok)
 
     print("\nFinal cost-aware Q-values (adjusted):")
     for i, cfg in enumerate(ARMS):

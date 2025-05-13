@@ -20,7 +20,8 @@ df["temperature"] = pd.to_numeric(df["temperature"], errors="coerce")
 df["reward"] = pd.to_numeric(df["reward"], errors="coerce")
 df["is_mutation"] = pd.to_numeric(df["is_mutation"], errors="coerce").fillna(0).astype(int)
 
-
+# ---------- JSON helpers ----------
+FIELDS = ["intent","entities","constraints","urgency","steps"]
 
 def safe_json(s: str):
     if not isinstance(s, str):

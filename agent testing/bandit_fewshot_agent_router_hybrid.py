@@ -7,19 +7,7 @@
 # - Arms = prompt_id x few-shot k x temperature (bandit still optimizes these)
 # - Router features: input length, presence of numbers/money/dates, simple intent hints
 #
-# Usage:
-#   python bandit_fewshot_agent_router_hybrid.py
-#
-# Inputs:
-#   agent_dataset.json            # [{"input": "...", "reference": "<json-string>"}]
-#   prompt_variants.json          # [{"id": "...", "template": "...", "category": "...", "intent": "..."}]
-#
-# Output:
-#   bandit_fewshot_agent_log_router_hybrid.csv
-#
-# Env:
-#   OPENAI_API_KEY
-# %%
+
 
 import os, csv, json, random, re
 from dataclasses import dataclass

@@ -341,9 +341,7 @@ def main():
     print(f"Faithfulness Score: {best_scores['faithfulness_score']:.2f}")
     print(f"RecLL Score: {best_scores['recLL_score']:.2f}")
     print(f"Coverage Score: {best_scores['coverage_score']:.2f}")
-    print(f"Diversity Score: {best_scores['diversity_score']:.2f}")
-    print('Answer recall score:',answer_recall_score)
-    print('Combined Relevance Score:' ,combined_relevance_score)
+
     print('Weighted Combined Score:', weighted_combined_score) ## contains retrieval_weight=0.4, faithfulness_weight=0.4, recall_weight=0.2
     print('Perplexity:', perplexity)
 

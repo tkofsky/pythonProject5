@@ -113,16 +113,16 @@ def score_answer_against_chunk(chunk, answer, question):
 
     penalty = 1.0
     if "context does not provide" in normalized_answer or "not listed" in normalized_answer:
-        penalty = 0.5
+        penalty = 0.25
 
     question_terms = set(normalized_question.split())
     answer_terms = set(normalized_answer.split())
     key_term_overlap = len(question_terms.intersection(answer_terms)) / len(question_terms) if question_terms else 0
 
-    adjusted_score = (normalized_similarity_score * penalty) * (0.6 + (0.35 * key_term_overlap))
+    adjusted_score = (normalized_similarity_score * penalty) * (0.7 + (0.3 * key_term_overlap))
     faithfulness_score = min(1.0, adjusted_score)
 
-    recLL_score = similarity_score if normalized_answer in normalized_chunk else 0.75 * similarity_score
+    recLL_score = similarity_score if normalized_answer in normalized_chunk else 0.5 * similarity_score
     coverage_score = len(answer_terms.intersection(question_terms)) / len(question_terms) if question_terms else 0
     diversity_score = len(set(answer.split())) / (len(answer.split()) + 1e-5)
 

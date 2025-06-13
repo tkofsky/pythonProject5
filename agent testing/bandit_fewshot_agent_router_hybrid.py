@@ -4,9 +4,6 @@
 # Dynamic-router + Hybrid Two-Pass bandit runner
 # - Chooses between one-pass and two-pass per example using lightweight routing
 # - Hybrid two-pass = only generate `steps` in Pass-2 if Pass-1 is valid; otherwise fallback to one-pass
-# - Arms = prompt_id x few-shot k x temperature (bandit still optimizes these)
-# - Router features: input length, presence of numbers/money/dates, simple intent hints
-#
 
 
 import os, csv, json, random, re

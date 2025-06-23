@@ -113,7 +113,7 @@ def score_answer_against_chunk(chunk, answer, question):
 
     penalty = 1.0
     if "context does not provide" in normalized_answer or "not listed" in normalized_answer:
-        penalty = 0.25
+        penalty = 0.5
 
     question_terms = set(normalized_question.split())
     answer_terms = set(normalized_answer.split())

@@ -1,24 +1,10 @@
-# Patch: create an enhanced router-hybrid runner with stronger Pass-2, step normalization, anchor gating, and router tweak.
-# File: /mnt/data/bandit_fewshot_agent_router_hybrid_enhanced.py
 
 code = r""
 # bandit_fewest_agent_router_hybrid_enhanced.py
 #
 # Dynamic-router + Hybrid Two-Pass bandit runner (ENHANCED)
-# - Stronger Pass-2 prompt (anchored, canonicalized style, 3–5 short imperative steps)
-# - Step normalization & anchor gating before accepting Pass-2
-# - Router tweaked to detect "step-heavy" requests (plan/sequence/itinerary/etc.)
-# - Retry-once for Pass-2 with lower temperature if anchor check fails
-#
-# Usage:
-#   python bandit_fewshot_agent_router_hybrid_enhanced.py
-#
-# Inputs:
-#   agent_dataset.json
-#   prompt_variants.json
-#
-# Output:
-#   bandit_fewshot_agent_log_router_hybrid_enhanced.csv
+
+
 #
 import os, csv, json, random, re
 from dataclasses import dataclass

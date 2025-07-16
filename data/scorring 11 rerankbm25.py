@@ -257,7 +257,25 @@ def calculate_answer_recall(retrieved_chunks, answer):
     return answer_recall_score
 
 
+def calculate_combined_relevance_score(query, retrieved_chunks, answer):
+    """
+    Calculates the Combined Relevance Score by averaging the similarity
+    between query and retrieved chunks and retrieved chunks and the answer.
+    """
+    query_embedding = get_embeddings([query])[0]
+    retrieved_embeddings = get_embeddings(retrieved_chunks)
+    answer_embedding = get_embeddings([answer])[0]
 
+    # Similarity between query and retrieved chunks
+    query_retrieved_similarity = np.mean(
+        [util.cos_sim(query_embedding, chunk_emb).item() for chunk_emb in retrieved_embeddings])
+
+    # Similarity between retrieved chunks and the answer
+    retrieved_answer_similarity = np.mean(
+        [util.cos_sim(chunk_emb, answer_embedding).item() for chunk_emb in retrieved_embeddings])
+
+    combined_relevance_score = (query_retrieved_similarity + retrieved_answer_similarity) / 2
+    return combined_relevance_score
 # Main function to run the process
 def calculate_weighted_combined_score(query, retrieved_chunks, answer, retrieval_score, faithfulness, recall,
                                       perplexity, weights=None):

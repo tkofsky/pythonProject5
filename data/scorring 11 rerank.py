@@ -273,7 +273,9 @@ def main():
     url = "https://en.wikipedia.org/wiki/Golden_State_Warriors"
     context = load_webpage_content(url)
 
-
+    if not context:
+        print("Failed to retrieve content from the web page.")
+        return
 
     question = "What religion is steph curry?"
     question = "Who also scored 118 points in the first three games"

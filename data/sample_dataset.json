@@ -1,0 +1,14 @@
+[
+  {
+    "input": "The Eiffel Tower is a wrought-iron lattice tower on the Champ de Mars in Paris, France. It is named after the engineer Gustave Eiffel, whose company designed and built the tower. Constructed from 1887 to 1889 as the entrance to the 1889 World's Fair, it was initially criticized by some of France's leading artists and intellectuals for its design, but it has become a global cultural icon of France and one of the most recognizable structures in the world.",
+    "reference": "The Eiffel Tower, built between 1887 and 1889 for the World's Fair, was designed by Gustave Eiffel. Although originally criticized, it has become a famous cultural symbol of France."
+  },
+  {
+    "input": "The Amazon rainforest, often referred to as the lungs of the planet, covers much of northwestern Brazil and extends into Colombia, Peru, and other South American countries. It is known for its biodiversity, with millions of species of insects, plants, birds, and other forms of life, many still unrecorded. The Amazon is crucial for regulating the Earth's oxygen and carbon cycles, and deforestation remains a major threat.",
+    "reference": "The Amazon rainforest spans several South American countries and is vital for global biodiversity and climate regulation. Despite its importance, it faces significant threats from deforestation."
+  },
+  {
+    "input": "Machine learning is a subset of artificial intelligence that focuses on building systems that learn from data. Rather than being explicitly programmed, these systems identify patterns and make decisions with minimal human intervention. Machine learning is used in various applications, from recommendation systems to autonomous vehicles.",
+    "reference": "Machine learning, a branch of AI, enables systems to learn patterns from data and make decisions autonomously. It powers technologies like recommendation engines and self-driving cars."
+  }
+]

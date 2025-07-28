@@ -26,7 +26,8 @@ ITERATIONS = 20 # number of iterations #
 # -----------------------------
 # LOAD DATA
 # -----------------------------
-with open("sample_dataset.json") as f:
+#with open("sample_dataset.json") as f:
+with open("longer_sample_dataset.json") as f:
     dataset = json.load(f)
 
 # -----------------------------

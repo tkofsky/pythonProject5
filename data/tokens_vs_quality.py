@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 ############## try using csv with more iterations etc
 
 # === Load the log file ===
-df = pd.read_csv("log.csv")
+df = pd.read_csv("log2.csv")
 
 print("✅ Loaded log with", len(df), "rows")
 print(df.head())

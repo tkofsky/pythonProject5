@@ -2,7 +2,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 # === Load the log CSV ===
-log_path = "log.csv"
+log_path = "log2.csv"
 df = pd.read_csv(log_path)
 
 print("\n✅ Loaded log with", len(df), "rows.")

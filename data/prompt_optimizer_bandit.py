@@ -20,8 +20,8 @@ client = OpenAI(api_key=api_key)
 OPENAI_MODEL = "gpt-3.5-turbo"
 ALPHA = 0.8      # weight for quality
 BETA = 0.2       # weight for cost
-EPSILON = 0.6    # exploration rate
-ITERATIONS = 50  # number of iterations
+EPSILON = 0.5    # exploration rate # 0.5
+ITERATIONS = 20 # number of iterations #
 
 # -----------------------------
 # LOAD DATA
@@ -38,7 +38,8 @@ initial_prompts = [
     "Please provide a short overview of the text below.",
     "Summarize the text clearly and briefly.",
     "Summarize the text with a focus on key events.",
-    "Summarize the text in plain, simple language."
+    "Summarize the text in plain, simple language.",
+    "give a proper summary of the text"
 ]
 # Track stats
 prompt_stats = {p: {"count": 0, "total_reward": 0.0} for p in initial_prompts}
@@ -102,7 +103,7 @@ def mutate_prompt(prompt):
 # CSV LOGGING SETUP
 # -----------------------------
 os.makedirs("results", exist_ok=True)
-log_path = "log.csv"
+log_path = "log2.csv"
 with open(log_path, "w", newline="", encoding="utf-8") as f:
     writer = csv.writer(f)
     writer.writerow(["iteration", "prompt", "quality", "tokens", "reward"])

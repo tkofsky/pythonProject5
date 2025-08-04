@@ -1,0 +1,12 @@
+[
+  {"prompt": "Summarize the following text in one paragraph.", "category": "original", "intent": "summarization"},
+  {"prompt": "Please provide a short overview of the text below.", "category": "original", "intent": "summarization"},
+  {"prompt": "Summarize the text for a high school student using simple language.", "category": "audience", "intent": "summarization"},
+  {"prompt": "Provide a very concise summary in bullet points.", "category": "style", "intent": "summarization"},
+  {"prompt": "Extract the three most important key points from the following text.", "category": "style", "intent": "extraction"},
+  {"prompt": "Create a short headline and a brief summary for the text.", "category": "behavior", "intent": "rewriting"},
+  {"prompt": "Provide a summary and include one sentence of critical analysis.", "category": "behavior", "intent": "analysis"},
+  {"prompt": "Rewrite the text to make it more formal while summarizing it.", "category": "style", "intent": "rewriting"},
+  {"prompt": "Explain the text as if you are talking to a beginner.", "category": "audience", "intent": "summarization"},
+  {"prompt": "List the top five insights from the text and give a short summary.", "category": "behavior", "intent": "extraction"}
+]

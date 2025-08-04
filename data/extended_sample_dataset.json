@@ -1,0 +1,22 @@
+[
+  {
+    "input": "Artificial intelligence is transforming industries across the world. From healthcare to finance, AI systems are improving efficiency, reducing costs, and enabling new levels of innovation. However, the adoption of AI also raises concerns about bias, privacy, and the displacement of human workers. Policymakers, researchers, and business leaders continue to debate how to ensure AI is developed responsibly while still fostering progress.",
+    "reference": "AI is revolutionizing industries but brings concerns about bias, privacy, and job displacement."
+  },
+  {
+    "input": "The Amazon rainforest is often referred to as the lungs of the Earth because it produces a significant portion of the planet's oxygen. Unfortunately, deforestation caused by logging, agriculture, and mining has drastically reduced its size over the past few decades. Scientists warn that if the current rate of destruction continues, it could lead to irreversible environmental consequences and severely impact biodiversity.",
+    "reference": "Deforestation in the Amazon threatens biodiversity and could have irreversible environmental impacts."
+  },
+  {
+    "input": "Electric vehicles (EVs) have seen a surge in popularity as governments and consumers push for greener alternatives to traditional cars. Advances in battery technology have reduced costs and increased range, making EVs more accessible. However, challenges remain, such as the need for better charging infrastructure and concerns about the environmental impact of battery production.",
+    "reference": "EVs are growing in popularity due to better batteries but still face charging and environmental challenges."
+  },
+  {
+    "input": "Space exploration has entered a new era with private companies like SpaceX and Blue Origin developing reusable rockets. These innovations have significantly lowered launch costs and reignited interest in missions to the Moon and Mars. While governments continue to play a major role, the involvement of private industry has accelerated progress and opened up commercial opportunities in space.",
+    "reference": "Private companies have reduced space launch costs and sparked renewed interest in Moon and Mars missions."
+  },
+  {
+    "input": "Climate change remains one of the most pressing global challenges. Rising sea levels, extreme weather events, and ecosystem disruptions are becoming increasingly common. Despite international agreements like the Paris Accord, many experts argue that stronger and faster action is needed to avoid catastrophic consequences in the coming decades.",
+    "reference": "Climate change is worsening, and experts call for urgent action despite global agreements."
+  }
+]

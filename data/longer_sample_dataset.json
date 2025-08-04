@@ -1,0 +1,15 @@
+[
+  {
+    "input": "The Mars Rover Perseverance, launched by NASA in July 2020, successfully landed on the surface of Mars in February 2021. Its mission is to search for signs of ancient life and collect samples of rock and soil for possible return to Earth. Equipped with advanced scientific instruments, the rover also carries the Ingenuity helicopter, the first aircraft to fly on another planet. The mission marks a significant step in planetary exploration and lays the groundwork for future human missions to Mars.",
+    "reference": "NASA's Perseverance Rover landed on Mars to search for signs of ancient life and collect samples, supported by the Ingenuity helicopter."
+  },
+  {
+    "input": "Climate change refers to long-term shifts in temperatures and weather patterns, primarily caused by human activities such as the burning of fossil fuels. These changes result in more frequent and severe weather events, rising sea levels, and disruption of natural ecosystems. Efforts to combat climate change include reducing greenhouse gas emissions, transitioning to renewable energy sources, and enhancing climate resilience in vulnerable communities.",
+    "reference": "Climate change causes extreme weather and rising seas, and must be addressed through emissions cuts and renewable energy."
+  },
+  {
+    "input": "The Internet of Things (IoT) is a network of physical devices embedded with sensors, software, and connectivity that allows them to exchange data. From smart thermostats and wearable fitness trackers to industrial machines and connected cars, IoT devices collect and transmit data in real-time. This technology enables greater automation, efficiency, and insights across a range of industries. However, it also raises concerns about data privacy, cybersecurity, and standardization.",
+    "reference": "IoT connects devices to collect data and automate tasks, but raises privacy and security concerns."
+  }
+]
+

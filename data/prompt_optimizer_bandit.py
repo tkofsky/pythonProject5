@@ -21,7 +21,7 @@ OPENAI_MODEL = "gpt-3.5-turbo"
 ALPHA = 0.8      # weight for quality
 BETA = 0.2       # weight for cost
 EPSILON = 0.5    # exploration rate # 0.5
-ITERATIONS = 20 # number of iterations #
+ITERATIONS = 200 # number of iterations #
 
 # -----------------------------
 # LOAD DATA

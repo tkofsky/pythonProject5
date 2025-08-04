@@ -1,0 +1,7 @@
+[
+  {"input": "Artificial intelligence is transforming various industries by automating tasks, improving decision-making, and enabling personalized experiences. Companies are rapidly adopting AI to gain a competitive edge.", "reference": "AI is automating tasks and improving decision-making across industries."},
+  {"input": "Climate change is accelerating, with rising temperatures causing more frequent natural disasters. Scientists warn immediate action is required to reduce carbon emissions and limit global warming.", "reference": "Climate change is worsening and urgent emission cuts are needed."},
+  {"input": "The stock market saw a significant surge today, driven by positive economic data and investor optimism. Analysts believe this trend may continue if conditions remain favorable.", "reference": "Stock prices rose on strong economic data and optimism."},
+  {"input": "Space exploration has entered a new era with private companies launching missions to the Moon and Mars. These ventures are expected to lower costs and expand human presence in space.", "reference": "Private companies are driving new space missions to cut costs and expand exploration."},
+  {"input": "Advances in medical research have led to the development of groundbreaking therapies that could cure previously untreatable diseases. Experts see a bright future for biotechnology.", "reference": "Biotech advances promise new cures for once-untreatable diseases."}
+]

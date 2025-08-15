@@ -1,0 +1,26 @@
+[
+  {
+    "id": "p_schema_strict",
+    "template": "You are an agent planner. Extract a structured plan as strict JSON only, no extra text. Schema keys: intent, entities, constraints, urgency, steps. If unknown, use null. No additional keys. No commentary.",
+    "category": "schema_strict",
+    "intent": "structured"
+  },
+  {
+    "id": "p_schema_guided",
+    "template": "Return ONLY JSON (no prose). Keys: intent, entities, constraints, urgency, steps. Keep values concise and factual. If anything is unknown, set it to null. Do not include any keys other than these five.",
+    "category": "schema_guided",
+    "intent": "structured"
+  },
+  {
+    "id": "p_reason_then_json",
+    "template": "Think silently to extract intent and entities, then output ONLY valid JSON with keys: intent, entities, constraints, urgency, steps. Do not reveal your reasoning. Do not add commentary.",
+    "category": "reason_hidden",
+    "intent": "structured"
+  },
+  {
+    "id": "p_minimal_json",
+    "template": "Output only minimal valid JSON with keys intent, entities, constraints, urgency, steps. Keep values terse. No commentary.",
+    "category": "minimal",
+    "intent": "structured"
+  }
+]

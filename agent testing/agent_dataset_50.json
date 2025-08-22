@@ -1,0 +1,951 @@
+[
+  {
+    "input": "Book a flight to Toronto under $500 before Monday",
+    "reference": {
+      "intent": "book_flight",
+      "entities": [
+        "Toronto"
+      ],
+      "constraints": [
+        "price under $500"
+      ],
+      "urgency": "before Monday",
+      "steps": [
+        "search flights",
+        "filter by price",
+        "select option"
+      ]
+    }
+  },
+  {
+    "input": "Find me a hotel in Paris with free WiFi and breakfast",
+    "reference": {
+      "intent": "book_hotel",
+      "entities": [
+        "Paris"
+      ],
+      "constraints": [
+        "free WiFi",
+        "breakfast included"
+      ],
+      "urgency": null,
+      "steps": [
+        "search hotels",
+        "apply filters",
+        "choose hotel"
+      ]
+    }
+  },
+  {
+    "input": "Reserve a rental car in Los Angeles for this weekend",
+    "reference": {
+      "intent": "rent_car",
+      "entities": [
+        "Los Angeles"
+      ],
+      "constraints": [
+        "this weekend"
+      ],
+      "urgency": "soon",
+      "steps": [
+        "search rental cars",
+        "filter by location and date",
+        "confirm booking"
+      ]
+    }
+  },
+  {
+    "input": "Get me train tickets from New York to Boston for two people tomorrow",
+    "reference": {
+      "intent": "book_train",
+      "entities": [
+        "New York",
+        "Boston"
+      ],
+      "constraints": [
+        "2 passengers"
+      ],
+      "urgency": "tomorrow",
+      "steps": [
+        "search trains",
+        "select date",
+        "choose seats",
+        "book tickets"
+      ]
+    }
+  },
+  {
+    "input": "Order two medium pepperoni pizzas for delivery",
+    "reference": {
+      "intent": "order_food",
+      "entities": [
+        "pizza",
+        "pepperoni"
+      ],
+      "constraints": [
+        "medium size",
+        "delivery"
+      ],
+      "urgency": null,
+      "steps": [
+        "open food app",
+        "select restaurant",
+        "place order"
+      ]
+    }
+  },
+  {
+    "input": "Find me a vegan restaurant nearby",
+    "reference": {
+      "intent": "find_restaurant",
+      "entities": [
+        "vegan"
+      ],
+      "constraints": [
+        "nearby"
+      ],
+      "urgency": null,
+      "steps": [
+        "search restaurants",
+        "filter vegan",
+        "list options"
+      ]
+    }
+  },
+  {
+    "input": "Order Chinese food for pickup at 7pm",
+    "reference": {
+      "intent": "order_food",
+      "entities": [
+        "Chinese food"
+      ],
+      "constraints": [
+        "pickup",
+        "7pm"
+      ],
+      "urgency": "time-specific",
+      "steps": [
+        "browse food options",
+        "select pickup",
+        "set time",
+        "confirm order"
+      ]
+    }
+  },
+  {
+    "input": "Schedule a dentist appointment next Friday at 3pm",
+    "reference": {
+      "intent": "schedule_appointment",
+      "entities": [
+        "dentist"
+      ],
+      "constraints": [
+        "next Friday",
+        "3pm"
+      ],
+      "urgency": "specific date/time",
+      "steps": [
+        "open calendar",
+        "find slot",
+        "book appointment"
+      ]
+    }
+  },
+  {
+    "input": "Book me a haircut appointment tomorrow afternoon",
+    "reference": {
+      "intent": "schedule_appointment",
+      "entities": [
+        "haircut"
+      ],
+      "constraints": [
+        "tomorrow afternoon"
+      ],
+      "urgency": "soon",
+      "steps": [
+        "open salon app",
+        "check availability",
+        "book appointment"
+      ]
+    }
+  },
+  {
+    "input": "Set up a doctor’s appointment for early next week",
+    "reference": {
+      "intent": "schedule_appointment",
+      "entities": [
+        "doctor"
+      ],
+      "constraints": [
+        "early next week"
+      ],
+      "urgency": null,
+      "steps": [
+        "check doctor availability",
+        "find time slot",
+        "confirm appointment"
+      ]
+    }
+  },
+  {
+    "input": "Buy a new iPhone 15 Pro Max in black, 256GB",
+    "reference": {
+      "intent": "buy_product",
+      "entities": [
+        "iPhone 15 Pro Max"
+      ],
+      "constraints": [
+        "black",
+        "256GB"
+      ],
+      "urgency": null,
+      "steps": [
+        "open store",
+        "search product",
+        "select color and size",
+        "checkout"
+      ]
+    }
+  },
+  {
+    "input": "Find me a laptop under $1000 with at least 16GB RAM",
+    "reference": {
+      "intent": "buy_product",
+      "entities": [
+        "laptop"
+      ],
+      "constraints": [
+        "price under $1000",
+        "16GB RAM"
+      ],
+      "urgency": null,
+      "steps": [
+        "search laptops",
+        "apply filters",
+        "compare models",
+        "purchase"
+      ]
+    }
+  },
+  {
+    "input": "Order groceries for home delivery today",
+    "reference": {
+      "intent": "order_groceries",
+      "entities": [
+        "groceries"
+      ],
+      "constraints": [
+        "home delivery",
+        "today"
+      ],
+      "urgency": "today",
+      "steps": [
+        "open grocery app",
+        "add items",
+        "choose delivery",
+        "checkout"
+      ]
+    }
+  },
+  {
+    "input": "Get me running shoes size 10",
+    "reference": {
+      "intent": "buy_product",
+      "entities": [
+        "running shoes"
+      ],
+      "constraints": [
+        "size 10"
+      ],
+      "urgency": null,
+      "steps": [
+        "search shoes",
+        "filter by size",
+        "add to cart",
+        "checkout"
+      ]
+    }
+  },
+  {
+    "input": "Remind me to send an email to Sarah at 2pm",
+    "reference": {
+      "intent": "set_reminder",
+      "entities": [
+        "Sarah"
+      ],
+      "constraints": [
+        "2pm"
+      ],
+      "urgency": "time-specific",
+      "steps": [
+        "open reminders",
+        "set recipient",
+        "set time",
+        "save reminder"
+      ]
+    }
+  },
+  {
+    "input": "Create a to-do list for tomorrow with three tasks: laundry, grocery shopping, and call mom",
+    "reference": {
+      "intent": "create_todo",
+      "entities": [
+        "laundry",
+        "grocery shopping",
+        "call mom"
+      ],
+      "constraints": [
+        "tomorrow"
+      ],
+      "urgency": null,
+      "steps": [
+        "open to-do app",
+        "add tasks",
+        "assign to tomorrow"
+      ]
+    }
+  },
+  {
+    "input": "Send an email to John with the project update",
+    "reference": {
+      "intent": "send_email",
+      "entities": [
+        "John"
+      ],
+      "constraints": [
+        "project update"
+      ],
+      "urgency": null,
+      "steps": [
+        "open email app",
+        "compose message",
+        "send email"
+      ]
+    }
+  },
+  {
+    "input": "Schedule a team meeting for Monday at 10am",
+    "reference": {
+      "intent": "schedule_meeting",
+      "entities": [
+        "team meeting"
+      ],
+      "constraints": [
+        "Monday",
+        "10am"
+      ],
+      "urgency": "time-specific",
+      "steps": [
+        "open calendar",
+        "invite attendees",
+        "set time",
+        "save meeting"
+      ]
+    }
+  },
+  {
+    "input": "Find movie showtimes for Oppenheimer near me tonight",
+    "reference": {
+      "intent": "find_movie",
+      "entities": [
+        "Oppenheimer"
+      ],
+      "constraints": [
+        "near me",
+        "tonight"
+      ],
+      "urgency": "time-specific",
+      "steps": [
+        "search movies",
+        "filter by location and time",
+        "list showtimes"
+      ]
+    }
+  },
+  {
+    "input": "Book concert tickets for Taylor Swift next month",
+    "reference": {
+      "intent": "book_event",
+      "entities": [
+        "Taylor Swift concert"
+      ],
+      "constraints": [
+        "next month"
+      ],
+      "urgency": null,
+      "steps": [
+        "search concerts",
+        "select date",
+        "purchase tickets"
+      ]
+    }
+  },
+  {
+    "input": "Get me NBA game tickets for the Raptors this weekend",
+    "reference": {
+      "intent": "book_event",
+      "entities": [
+        "NBA game",
+        "Raptors"
+      ],
+      "constraints": [
+        "this weekend"
+      ],
+      "urgency": null,
+      "steps": [
+        "search NBA games",
+        "select Raptors game",
+        "buy tickets"
+      ]
+    }
+  },
+  {
+    "input": "Find a local museum open on Sundays",
+    "reference": {
+      "intent": "find_place",
+      "entities": [
+        "museum"
+      ],
+      "constraints": [
+        "open on Sunday"
+      ],
+      "urgency": null,
+      "steps": [
+        "search museums",
+        "filter by hours",
+        "list options"
+      ]
+    }
+  },
+  {
+    "input": "Book a flight to Toronto under $500 before Monday",
+    "reference": {
+      "intent": "book_flight",
+      "entities": [
+        "Toronto"
+      ],
+      "constraints": [
+        "price under $500"
+      ],
+      "urgency": "before Monday",
+      "steps": [
+        "search flights",
+        "filter by price",
+        "select option"
+      ]
+    }
+  },
+  {
+    "input": "Find me a hotel in Paris with free WiFi and breakfast",
+    "reference": {
+      "intent": "book_hotel",
+      "entities": [
+        "Paris"
+      ],
+      "constraints": [
+        "free WiFi",
+        "breakfast included"
+      ],
+      "urgency": null,
+      "steps": [
+        "search hotels",
+        "apply filters",
+        "choose hotel"
+      ]
+    }
+  },
+  {
+    "input": "Reserve a rental car in Los Angeles for this weekend",
+    "reference": {
+      "intent": "rent_car",
+      "entities": [
+        "Los Angeles"
+      ],
+      "constraints": [
+        "this weekend"
+      ],
+      "urgency": "soon",
+      "steps": [
+        "search rental cars",
+        "filter by location and date",
+        "confirm booking"
+      ]
+    }
+  },
+  {
+    "input": "Get me train tickets from New York to Boston for two people tomorrow",
+    "reference": {
+      "intent": "book_train",
+      "entities": [
+        "New York",
+        "Boston"
+      ],
+      "constraints": [
+        "2 passengers"
+      ],
+      "urgency": "tomorrow",
+      "steps": [
+        "search trains",
+        "select date",
+        "choose seats",
+        "book tickets"
+      ]
+    }
+  },
+  {
+    "input": "Order two medium pepperoni pizzas for delivery",
+    "reference": {
+      "intent": "order_food",
+      "entities": [
+        "pizza",
+        "pepperoni"
+      ],
+      "constraints": [
+        "medium size",
+        "delivery"
+      ],
+      "urgency": null,
+      "steps": [
+        "open food app",
+        "select restaurant",
+        "place order"
+      ]
+    }
+  },
+  {
+    "input": "Find me a vegan restaurant nearby",
+    "reference": {
+      "intent": "find_restaurant",
+      "entities": [
+        "vegan"
+      ],
+      "constraints": [
+        "nearby"
+      ],
+      "urgency": null,
+      "steps": [
+        "search restaurants",
+        "filter vegan",
+        "list options"
+      ]
+    }
+  },
+  {
+    "input": "Order Chinese food for pickup at 7pm",
+    "reference": {
+      "intent": "order_food",
+      "entities": [
+        "Chinese food"
+      ],
+      "constraints": [
+        "pickup",
+        "7pm"
+      ],
+      "urgency": "time-specific",
+      "steps": [
+        "browse food options",
+        "select pickup",
+        "set time",
+        "confirm order"
+      ]
+    }
+  },
+  {
+    "input": "Schedule a dentist appointment next Friday at 3pm",
+    "reference": {
+      "intent": "schedule_appointment",
+      "entities": [
+        "dentist"
+      ],
+      "constraints": [
+        "next Friday",
+        "3pm"
+      ],
+      "urgency": "specific date/time",
+      "steps": [
+        "open calendar",
+        "find slot",
+        "book appointment"
+      ]
+    }
+  },
+  {
+    "input": "Book me a haircut appointment tomorrow afternoon",
+    "reference": {
+      "intent": "schedule_appointment",
+      "entities": [
+        "haircut"
+      ],
+      "constraints": [
+        "tomorrow afternoon"
+      ],
+      "urgency": "soon",
+      "steps": [
+        "open salon app",
+        "check availability",
+        "book appointment"
+      ]
+    }
+  },
+  {
+    "input": "Set up a doctor’s appointment for early next week",
+    "reference": {
+      "intent": "schedule_appointment",
+      "entities": [
+        "doctor"
+      ],
+      "constraints": [
+        "early next week"
+      ],
+      "urgency": null,
+      "steps": [
+        "check doctor availability",
+        "find time slot",
+        "confirm appointment"
+      ]
+    }
+  },
+  {
+    "input": "Buy a new iPhone 15 Pro Max in black, 256GB",
+    "reference": {
+      "intent": "buy_product",
+      "entities": [
+        "iPhone 15 Pro Max"
+      ],
+      "constraints": [
+        "black",
+        "256GB"
+      ],
+      "urgency": null,
+      "steps": [
+        "open store",
+        "search product",
+        "select color and size",
+        "checkout"
+      ]
+    }
+  },
+  {
+    "input": "Find me a laptop under $1000 with at least 16GB RAM",
+    "reference": {
+      "intent": "buy_product",
+      "entities": [
+        "laptop"
+      ],
+      "constraints": [
+        "price under $1000",
+        "16GB RAM"
+      ],
+      "urgency": null,
+      "steps": [
+        "search laptops",
+        "apply filters",
+        "compare models",
+        "purchase"
+      ]
+    }
+  },
+  {
+    "input": "Order groceries for home delivery today",
+    "reference": {
+      "intent": "order_groceries",
+      "entities": [
+        "groceries"
+      ],
+      "constraints": [
+        "home delivery",
+        "today"
+      ],
+      "urgency": "today",
+      "steps": [
+        "open grocery app",
+        "add items",
+        "choose delivery",
+        "checkout"
+      ]
+    }
+  },
+  {
+    "input": "Get me running shoes size 10",
+    "reference": {
+      "intent": "buy_product",
+      "entities": [
+        "running shoes"
+      ],
+      "constraints": [
+        "size 10"
+      ],
+      "urgency": null,
+      "steps": [
+        "search shoes",
+        "filter by size",
+        "add to cart",
+        "checkout"
+      ]
+    }
+  },
+  {
+    "input": "Remind me to send an email to Sarah at 2pm",
+    "reference": {
+      "intent": "set_reminder",
+      "entities": [
+        "Sarah"
+      ],
+      "constraints": [
+        "2pm"
+      ],
+      "urgency": "time-specific",
+      "steps": [
+        "open reminders",
+        "set recipient",
+        "set time",
+        "save reminder"
+      ]
+    }
+  },
+  {
+    "input": "Create a to-do list for tomorrow with three tasks: laundry, grocery shopping, and call mom",
+    "reference": {
+      "intent": "create_todo",
+      "entities": [
+        "laundry",
+        "grocery shopping",
+        "call mom"
+      ],
+      "constraints": [
+        "tomorrow"
+      ],
+      "urgency": null,
+      "steps": [
+        "open to-do app",
+        "add tasks",
+        "assign to tomorrow"
+      ]
+    }
+  },
+  {
+    "input": "Send an email to John with the project update",
+    "reference": {
+      "intent": "send_email",
+      "entities": [
+        "John"
+      ],
+      "constraints": [
+        "project update"
+      ],
+      "urgency": null,
+      "steps": [
+        "open email app",
+        "compose message",
+        "send email"
+      ]
+    }
+  },
+  {
+    "input": "Schedule a team meeting for Monday at 10am",
+    "reference": {
+      "intent": "schedule_meeting",
+      "entities": [
+        "team meeting"
+      ],
+      "constraints": [
+        "Monday",
+        "10am"
+      ],
+      "urgency": "time-specific",
+      "steps": [
+        "open calendar",
+        "invite attendees",
+        "set time",
+        "save meeting"
+      ]
+    }
+  },
+  {
+    "input": "Find movie showtimes for Oppenheimer near me tonight",
+    "reference": {
+      "intent": "find_movie",
+      "entities": [
+        "Oppenheimer"
+      ],
+      "constraints": [
+        "near me",
+        "tonight"
+      ],
+      "urgency": "time-specific",
+      "steps": [
+        "search movies",
+        "filter by location and time",
+        "list showtimes"
+      ]
+    }
+  },
+  {
+    "input": "Book concert tickets for Taylor Swift next month",
+    "reference": {
+      "intent": "book_event",
+      "entities": [
+        "Taylor Swift concert"
+      ],
+      "constraints": [
+        "next month"
+      ],
+      "urgency": null,
+      "steps": [
+        "search concerts",
+        "select date",
+        "purchase tickets"
+      ]
+    }
+  },
+  {
+    "input": "Get me NBA game tickets for the Raptors this weekend",
+    "reference": {
+      "intent": "book_event",
+      "entities": [
+        "NBA game",
+        "Raptors"
+      ],
+      "constraints": [
+        "this weekend"
+      ],
+      "urgency": null,
+      "steps": [
+        "search NBA games",
+        "select Raptors game",
+        "buy tickets"
+      ]
+    }
+  },
+  {
+    "input": "Find a local museum open on Sundays",
+    "reference": {
+      "intent": "find_place",
+      "entities": [
+        "museum"
+      ],
+      "constraints": [
+        "open on Sunday"
+      ],
+      "urgency": null,
+      "steps": [
+        "search museums",
+        "filter by hours",
+        "list options"
+      ]
+    }
+  },
+  {
+    "input": "Book a flight to Toronto under $500 before Monday",
+    "reference": {
+      "intent": "book_flight",
+      "entities": [
+        "Toronto"
+      ],
+      "constraints": [
+        "price under $500"
+      ],
+      "urgency": "before Monday",
+      "steps": [
+        "search flights",
+        "filter by price",
+        "select option"
+      ]
+    }
+  },
+  {
+    "input": "Find me a hotel in Paris with free WiFi and breakfast",
+    "reference": {
+      "intent": "book_hotel",
+      "entities": [
+        "Paris"
+      ],
+      "constraints": [
+        "free WiFi",
+        "breakfast included"
+      ],
+      "urgency": null,
+      "steps": [
+        "search hotels",
+        "apply filters",
+        "choose hotel"
+      ]
+    }
+  },
+  {
+    "input": "Reserve a rental car in Los Angeles for this weekend",
+    "reference": {
+      "intent": "rent_car",
+      "entities": [
+        "Los Angeles"
+      ],
+      "constraints": [
+        "this weekend"
+      ],
+      "urgency": "soon",
+      "steps": [
+        "search rental cars",
+        "filter by location and date",
+        "confirm booking"
+      ]
+    }
+  },
+  {
+    "input": "Get me train tickets from New York to Boston for two people tomorrow",
+    "reference": {
+      "intent": "book_train",
+      "entities": [
+        "New York",
+        "Boston"
+      ],
+      "constraints": [
+        "2 passengers"
+      ],
+      "urgency": "tomorrow",
+      "steps": [
+        "search trains",
+        "select date",
+        "choose seats",
+        "book tickets"
+      ]
+    }
+  },
+  {
+    "input": "Order two medium pepperoni pizzas for delivery",
+    "reference": {
+      "intent": "order_food",
+      "entities": [
+        "pizza",
+        "pepperoni"
+      ],
+      "constraints": [
+        "medium size",
+        "delivery"
+      ],
+      "urgency": null,
+      "steps": [
+        "open food app",
+        "select restaurant",
+        "place order"
+      ]
+    }
+  },
+  {
+    "input": "Find me a vegan restaurant nearby",
+    "reference": {
+      "intent": "find_restaurant",
+      "entities": [
+        "vegan"
+      ],
+      "constraints": [
+        "nearby"
+      ],
+      "urgency": null,
+      "steps": [
+        "search restaurants",
+        "filter vegan",
+        "list options"
+      ]
+    }
+  }
+]

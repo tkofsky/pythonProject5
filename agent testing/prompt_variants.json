@@ -22,5 +22,53 @@
     "template": "Output only minimal valid JSON with keys intent, entities, constraints, urgency, steps. Keep values terse. No commentary.",
     "category": "minimal",
     "intent": "structured"
+  },
+  {
+    "id": "p_steps_3to5_verbs",
+    "template": "Return ONLY JSON (no prose). Keys: intent, entities, constraints, urgency, steps. If unknown, set null. No other keys. In steps, output exactly 3–5 items and make each item a short action verb or verb phrase (e.g., \"search_trains\", \"filter_by_price_and_time\", \"send_invites\"). Steps must be procedural, not a summary.",
+    "category": "steps_focus",
+    "intent": "structured"
+  },
+  {
+    "id": "p_steps_cover_entities",
+    "template": "Output ONLY valid JSON with keys intent, entities, constraints, urgency, steps. Unknown → null. Do not add extra keys. Steps must explicitly operate on the entities present (e.g., if there is a date or participant, include a step that uses it). Use 3–5 concise action steps.",
+    "category": "steps_focus",
+    "intent": "structured"
+  },
+  {
+    "id": "p_steps_ordered_pipeline",
+    "template": "Only JSON. Keys: intent, entities, constraints, urgency, steps. Unknown → null. No extra keys. Steps must form an ordered pipeline from discovery to finalization (e.g., search → filter → propose → confirm). Use 3–5 short verbs/verb phrases. Avoid filler words.",
+    "category": "steps_focus",
+    "intent": "structured"
+  },
+  {
+    "id": "p_constraints_never_omit",
+    "template": "Return ONLY JSON with keys intent, entities, constraints, urgency, steps. Unknown → null. No extra keys. Do NOT omit constraints: enumerate ALL user-stated rules such as budgets (e.g., \"budget<=120\"), dietary restrictions (e.g., \"vegan_only\"), platforms (e.g., \"include_zoom_link\"), times, and locations.",
+    "category": "constraints_focus",
+    "intent": "structured"
+  },
+  {
+    "id": "p_constraints_surface_forms",
+    "template": "Return ONLY JSON with keys intent, entities, constraints, urgency, steps. Unknown → null. No extra keys. In constraints, preserve user surface forms and operators (e.g., \"under $120\" → \"budget<=120\"). Include every explicit rule; do not infer unstated constraints.",
+    "category": "constraints_focus",
+    "intent": "structured"
+  },
+  {
+    "id": "p_constraints_and_steps_binding",
+    "template": "Only JSON (no prose). Keys: intent, entities, constraints, urgency, steps. Unknown → null. No extra keys. List ALL explicit constraints. Ensure at least one step enforces the listed constraints (e.g., if budget exists, include a filtering step by price). Steps = 3–5 concise action verbs.",
+    "category": "constraints_steps_bridge",
+    "intent": "structured"
+  },
+  {
+    "id": "p_minjson_null_and_exact_keys",
+    "template": "Output ONLY minimal JSON with the EXACT keys: intent, entities, constraints, urgency, steps. If a value is unknown or not provided, set it to null. Do not invent values. Do not include any other keys. Keep all values terse.",
+    "category": "minimal_hardguard",
+    "intent": "structured"
+  },
+  {
+    "id": "p_reason_hidden_steps_first",
+    "template": "Think silently to identify intent, entities, and constraints; then output ONLY JSON with keys: intent, entities, constraints, urgency, steps. Do not reveal your reasoning. Steps must be 3–5 concise actions and should reference entities/constraints where relevant. Unknown → null. No extra keys.",
+    "category": "reason_hidden_steps",
+    "intent": "structured"
   }
 ]

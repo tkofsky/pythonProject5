@@ -5,11 +5,11 @@ from typing import Dict, Tuple, List, Optional
 from openai import OpenAI
 
 # ========= CONFIG =========
-DATA_PATH = "agent_dataset.json"
+DATA_PATH = "agent_dataset_more.json"
 PROMPTS_PATH = "prompt_variants.json"
 CSV_LOG = "bandit_fewshot_agent_log_two_pass.csv"
 
-ITERATIONS = 80
+ITERATIONS = 40
 EPSILON = 0.25
 FEW_SHOT_LEVELS = [0, 1, 3]
 TEMPS = [0.2, 0.5]

@@ -7,12 +7,13 @@ from openai import OpenAI
 # ========= CONFIG =========
 DATA_PATH = "agent_dataset.json"
 PROMPTS_PATH = "prompt_variants.json"
-CSV_LOG = "bandit_fewshot_agent_log_two_pass.csv"
+#CSV_LOG = "bandit_fewshot_agent_log_two_pass.csv"
+CSV_LOG = "bandit_fewshot_agent_log"
 
-ITERATIONS = 80
+ITERATIONS = 30
 EPSILON = 0.25
 FEW_SHOT_LEVELS = [0, 1, 3]
-TEMPS = [0.2, 0.5]
+TEMPS = [0.2, 0.3]
 TWO_PASS_OPTIONS = [False, True]
 GEN_MODEL = "gpt-4o-mini"
 

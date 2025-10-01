@@ -1,3 +1,7 @@
+# Regenerate a complete, self-contained analyze_bandit_timeline.py with min-pulls filtering.
+code_path = "analyze_bandit_timeline.py"
+
+code = r''
 import os
 import numpy as np
 import pandas as pd
@@ -8,8 +12,9 @@ LOG_CANDIDATES = [
     "bandit_fewshot_agent_log.csv",
     "bandit_fewshot_agent_log_two_pass.csv"
 ]
-TOPN = 8          # how many arms to plot
-WINDOW = 30        # rolling mean window size = 7
+TOPN = 8           # how many arms to plot
+WINDOW = 15        # rolling mean window size (longer smoothing)
+MIN_PULLS = 10     # minimum number of pulls required per arm to plot
 OUT_DIR = "agent_plots_bandit_timeline"
 
 # ---------- Helpers ----------
@@ -43,6 +48,7 @@ def main():
     if "tokens" not in df.columns:
         df["tokens"] = np.nan
     if "is_mutation" not in df.columns:
+        # infer from prompt_id suffix if missing
         df["is_mutation"] = df["prompt_id"].astype(str).str.contains(r"__m\d+$").astype(int)
 
     # Arm label
@@ -58,10 +64,19 @@ def main():
     df["arm"] = df.apply(arm_label, axis=1)
     df = df.sort_values("iteration")
 
+    # Apply minimum pulls filter BEFORE ranking
+    pull_counts = df.groupby("arm").size().reset_index(name="n_pulls")
+    valid_arms = pull_counts[pull_counts["n_pulls"] >= MIN_PULLS]["arm"]
+    df = df[df["arm"].isin(valid_arms)].copy()
+
+    if df.empty:
+        print(f"⚠️ No arms meet MIN_PULLS={MIN_PULLS}. Try lowering MIN_PULLS or run longer.")
+        return
+
     # Efficiency
     df["reward_per_1k"] = np.where(df["tokens"]>0, df["reward"]/(df["tokens"]/1000.0), np.nan)
 
-    # Rank arms
+    # Rank arms by mean reward (on filtered set)
     arm_stats = (df.groupby("arm")[["reward","reward_per_1k"]]
                    .mean()
                    .sort_values("reward", ascending=False)
@@ -79,7 +94,7 @@ def main():
         sub = df[df["arm"]==arm]
         rm = rolling_mean(sub.set_index("iteration")["reward"], WINDOW)
         plt.plot(rm.index, rm.values, label=arm)
-    plt.title(f"Rolling mean reward (window={WINDOW}) for top {topN} arms")
+    plt.title(f"Rolling mean reward (window={WINDOW}) for top {topN} arms (min pulls ≥ {MIN_PULLS})")
     plt.xlabel("iteration"); plt.ylabel("reward"); plt.ylim(0,1)
     plt.legend(loc="best", fontsize=8)
     plt.tight_layout()
@@ -93,7 +108,7 @@ def main():
             sub = df[df["arm"]==arm]
             rm = rolling_mean(sub.set_index("iteration")["reward_per_1k"], WINDOW)
             plt.plot(rm.index, rm.values, label=arm)
-        plt.title(f"Rolling mean reward/1k (window={WINDOW}) for top {topN} arms")
+        plt.title(f"Rolling mean reward/1k (window={WINDOW}) for top {topN} arms (min pulls ≥ {MIN_PULLS})")
         plt.xlabel("iteration"); plt.ylabel("reward per 1k tokens")
         plt.legend(loc="best", fontsize=8)
         plt.tight_layout()
@@ -112,7 +127,7 @@ def main():
         counts, edges = np.histogram(sub["iteration"].dropna(), bins=bins)
         centers = (edges[:-1] + edges[1:]) / 2.0
         plt.plot(centers, counts, marker="o", label=arm)
-    plt.title("Arm pulls over time (binned counts)")
+    plt.title(f"Arm pulls over time (binned counts) — min pulls ≥ {MIN_PULLS}")
     plt.xlabel("iteration bin center"); plt.ylabel("# pulls in bin")
     plt.legend(loc="best", fontsize=8)
     plt.tight_layout()
@@ -125,7 +140,7 @@ def main():
         plt.figure(figsize=(10,3))
         plt.scatter(mut["iteration"], [1]*len(mut), s=12)
         plt.yticks([]); plt.xlabel("iteration")
-        plt.title("Mutated prompt occurrences")
+        plt.title("Mutated prompt occurrences (filtered set)")
         plt.tight_layout()
         plt.savefig(os.path.join(OUT_DIR, "mutation_markers.png"), dpi=140)
         plt.close()
@@ -138,6 +153,9 @@ def main():
     if not mut.empty:
         print("   - mutation_markers.png")
     print("   - arm_summary_topN.csv")
+    print(f"   (MIN_PULLS={MIN_PULLS}, WINDOW={WINDOW}, TOPN={TOPN})")
 
 if __name__ == "__main__":
     main()
+
+

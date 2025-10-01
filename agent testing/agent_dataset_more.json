@@ -1,110 +1,202 @@
 [
-  {"input":"Book a flight from Toronto to Vancouver next Friday evening. I prefer direct and under $600.","reference":"{\"intent\":\"book_flight\",\"entities\":{\"from\":\"Toronto\",\"to\":\"Vancouver\",\"date\":\"next Friday evening\",\"budget\":\"600\",\"stops\":\"direct\"},\"constraints\":[\"budget<=600\",\"direct_only\"],\"urgency\":\"normal\",\"steps\":[\"search_flights\",\"filter_by_price_and_nonstop\",\"propose_top_options\"]}"},
-  {"input":"Summarize this 30-page PDF and extract 5 action items by tomorrow morning.","reference":"{\"intent\":\"summarize_and_extract_actions\",\"entities\":{\"doc_type\":\"pdf\",\"length\":\"30 pages\",\"deadline\":\"tomorrow morning\",\"actions\":5},\"constraints\":[\"return_bullet_points\",\"concise_summary\"],\"urgency\":\"time_sensitive\",\"steps\":[\"ingest_document\",\"summarize\",\"extract_actions\",\"format_bullets\"]}"},
-  {"input":"Set up a 45-minute meeting with Priya and Chen this Thursday after 2pm. Add a Zoom link.","reference":"{\"intent\":\"schedule_meeting\",\"entities\":{\"participants\":[\"Priya\",\"Chen\"],\"duration\":\"45 minutes\",\"time_window\":\"Thursday after 2pm\",\"location\":\"Zoom\"},\"constraints\":[\"include_zoom_link\"],\"urgency\":\"normal\",\"steps\":[\"find_common_slot\",\"create_zoom\",\"send_invites\"]}"},
-  {"input":"Order lunch for 8 people, vegetarian friendly, delivery between 12:15–12:45 to 123 King St.","reference":"{\"intent\":\"order_food\",\"entities\":{\"headcount\":8,\"diet\":\"vegetarian\",\"delivery_window\":\"12:15-12:45\",\"address\":\"123 King St\"},\"constraints\":[\"vegetarian_options\"],\"urgency\":\"time_sensitive\",\"steps\":[\"choose_caterers\",\"filter_menu\",\"schedule_delivery\"]}"},
-  {"input":"Draft a polite follow-up email to the recruiter about my interview last week and ask about next steps.","reference":"{\"intent\":\"draft_email\",\"entities\":{\"recipient\":\"recruiter\",\"topic\":\"interview_follow_up\",\"time_ref\":\"last week\"},\"constraints\":[\"polite_tone\",\"ask_next_steps\"],\"urgency\":\"normal\",\"steps\":[\"draft_email\",\"review_tone\",\"send_or_copy\"]}"},
-   {
-    "input": "Book me a roundtrip flight from Toronto to New York leaving Friday morning and returning Sunday evening.",
-    "reference": {
-      "intent": "book_flight",
-      "entities": ["Toronto", "New York"],
-      "constraints": ["roundtrip", "depart Friday morning", "return Sunday evening"],
-      "urgency": "specific dates",
-      "steps": ["search flights", "apply filters", "select option", "confirm booking"]
-    }
+  {
+    "input": "Find me a flight from NYC to YUL leaving next week.",
+    "reference": "{\"intent\": \"book_flight\", \"entities\": {\"from\": \"NYC\", \"to\": \"YUL\", \"date\": \"tomorrow morning\"}, \"constraints\": [\"direct_flight_preferred\"], \"urgency\": \"time_sensitive\", \"steps\": [\"search_flights\", \"filter_options\", \"present_results\"]}"
   },
   {
-    "input": "Order a large pepperoni pizza with extra cheese for pickup.",
-    "reference": {
-      "intent": "order_food",
-      "entities": ["pizza", "pepperoni"],
-      "constraints": ["large", "extra cheese", "pickup"],
-      "urgency": null,
-      "steps": ["open food app", "select restaurant", "customize order", "place order"]
-    }
+    "input": "Order 3 vegan lunches for pickup at 11pm at 9 King St.",
+    "reference": "{\"intent\": \"order_food\", \"entities\": {\"headcount\": 4, \"diet\": \"vegan\", \"pickup_time\": \"1pm\", \"address\": \"9 King St\"}, \"constraints\": [\"vegan_only\"], \"urgency\": \"time_sensitive\", \"steps\": [\"choose_restaurants\", \"filter_menu\", \"place_order\"]}"
   },
   {
-    "input": "Remind me to call Sarah about the project tomorrow at 10am.",
-    "reference": {
-      "intent": "set_reminder",
-      "entities": ["Sarah", "project"],
-      "constraints": ["tomorrow 10am"],
-      "urgency": "time-bound",
-      "steps": ["open reminders app", "create reminder", "set time"]
-    }
+    "input": "Remind me to call John in 2 hours.",
+    "reference": "{\"intent\": \"set_reminder\", \"entities\": {\"person\": \"John\", \"time\": \"tomorrow 10am\"}, \"constraints\": [], \"urgency\": \"normal\", \"steps\": [\"create_reminder\", \"notify_user\"]}"
   },
   {
-    "input": "Schedule a dentist appointment for next Wednesday afternoon.",
-    "reference": {
-      "intent": "schedule_appointment",
-      "entities": ["dentist"],
-      "constraints": ["Wednesday afternoon"],
-      "urgency": "specific date/time",
-      "steps": ["open calendar", "find slot", "book appointment"]
-    }
+    "input": "Write a brief thank-you email to the recruiter and ask for feedback.",
+    "reference": "{\"intent\": \"draft_email\", \"entities\": {\"recipient\": \"recruiter\", \"topic\": \"thank_you\", \"extra_request\": \"feedback\"}, \"constraints\": [\"polite_tone\", \"brief\"], \"urgency\": \"normal\", \"steps\": [\"draft_email\", \"review_tone\", \"send_or_copy\"]}"
   },
   {
-    "input": "Translate 'How are you?' into French and Spanish.",
-    "reference": {
-      "intent": "translate_text",
-      "entities": ["How are you?", "French", "Spanish"],
-      "constraints": null,
-      "urgency": null,
-      "steps": ["detect source language", "translate into French", "translate into Spanish"]
-    }
+    "input": "Book a train from Boston to New York on tomorrow under $116.",
+    "reference": "{\"intent\": \"book_train\", \"entities\": {\"from\": \"Boston\", \"to\": \"New York\", \"date\": \"tomorrow\", \"budget\": \"120\"}, \"constraints\": [\"budget<=120\"], \"urgency\": \"normal\", \"steps\": [\"search_trains\", \"filter_by_price_and_time\", \"propose_top_options\"]}"
   },
   {
-    "input": "Find me a hotel in Paris under $200 per night near the Eiffel Tower.",
-    "reference": {
-      "intent": "book_hotel",
-      "entities": ["Paris", "Eiffel Tower"],
-      "constraints": ["under $200 per night"],
-      "urgency": null,
-      "steps": ["search hotels", "apply filters", "select option"]
-    }
+    "input": "Remind me to call John in 2 hours.",
+    "reference": "{\"intent\": \"set_reminder\", \"entities\": {\"person\": \"John\", \"time\": \"tomorrow 10am\"}, \"constraints\": [], \"urgency\": \"normal\", \"steps\": [\"create_reminder\", \"notify_user\"]}"
   },
   {
-    "input": "Play some relaxing jazz music.",
-    "reference": {
-      "intent": "play_music",
-      "entities": ["jazz"],
-      "constraints": ["relaxing"],
-      "urgency": null,
-      "steps": ["open music app", "search jazz playlist", "start playback"]
-    }
+    "input": "Call Dad on cell.",
+    "reference": "{\"intent\": \"call_contact\", \"entities\": {\"contact\": \"Mom\", \"method\": \"cell\"}, \"constraints\": [], \"urgency\": \"time_sensitive\", \"steps\": [\"open_dialer\", \"place_call\"]}"
   },
   {
-    "input": "Send an email to HR asking about my vacation days.",
-    "reference": {
-      "intent": "send_email",
-      "entities": ["HR", "vacation days"],
-      "constraints": null,
-      "urgency": null,
-      "steps": ["open email", "compose message", "send"]
-    }
+    "input": "Book a train from Boston to New York on tomorrow under $96.",
+    "reference": "{\"intent\": \"book_train\", \"entities\": {\"from\": \"Boston\", \"to\": \"New York\", \"date\": \"tomorrow\", \"budget\": \"120\"}, \"constraints\": [\"budget<=120\"], \"urgency\": \"normal\", \"steps\": [\"search_trains\", \"filter_by_price_and_time\", \"propose_top_options\"]}"
   },
   {
-    "input": "Check the weather in Vancouver this weekend.",
-    "reference": {
-      "intent": "check_weather",
-      "entities": ["Vancouver"],
-      "constraints": ["this weekend"],
-      "urgency": null,
-      "steps": ["open weather API", "query Vancouver", "filter weekend forecast"]
-    }
+    "input": "Schedule a 30 minute Zoom meeting with Alex tomorrow after 3pm.",
+    "reference": "{\"intent\": \"schedule_meeting\", \"entities\": {\"participants\": [\"Alex\"], \"duration\": \"30 minutes\", \"time_window\": \"tomorrow after 3pm\", \"location\": \"Zoom\"}, \"constraints\": [\"include_zoom_link\"], \"urgency\": \"normal\", \"steps\": [\"find_common_slot\", \"create_zoom\", \"send_invites\"]}"
   },
   {
-    "input": "Add bananas, milk, and bread to my shopping list.",
-    "reference": {
-      "intent": "add_shopping_list",
-      "entities": ["bananas", "milk", "bread"],
-      "constraints": null,
-      "urgency": null,
-      "steps": ["open shopping list", "append items", "save list"]
-    }
+    "input": "Play some jazz music.",
+    "reference": "{\"intent\": \"play_music\", \"entities\": {\"genre\": \"jazz\"}, \"constraints\": [], \"urgency\": \"normal\", \"steps\": [\"open_music_app\", \"search_genre\", \"play_selection\"]}"
+  },
+  {
+    "input": "Remind me to call John in 2 hours.",
+    "reference": "{\"intent\": \"set_reminder\", \"entities\": {\"person\": \"John\", \"time\": \"tomorrow 10am\"}, \"constraints\": [], \"urgency\": \"normal\", \"steps\": [\"create_reminder\", \"notify_user\"]}"
+  },
+  {
+    "input": "Book a train from Boston to New York on tomorrow under $135.",
+    "reference": "{\"intent\": \"book_train\", \"entities\": {\"from\": \"Boston\", \"to\": \"New York\", \"date\": \"tomorrow\", \"budget\": \"120\"}, \"constraints\": [\"budget<=120\"], \"urgency\": \"normal\", \"steps\": [\"search_trains\", \"filter_by_price_and_time\", \"propose_top_options\"]}"
+  },
+  {
+    "input": "Find me a flight from NYC to YUL leaving tomorrow morning.",
+    "reference": "{\"intent\": \"book_flight\", \"entities\": {\"from\": \"NYC\", \"to\": \"YUL\", \"date\": \"tomorrow morning\"}, \"constraints\": [\"direct_flight_preferred\"], \"urgency\": \"time_sensitive\", \"steps\": [\"search_flights\", \"filter_options\", \"present_results\"]}"
+  },
+  {
+    "input": "Play some jazz music.",
+    "reference": "{\"intent\": \"play_music\", \"entities\": {\"genre\": \"jazz\"}, \"constraints\": [], \"urgency\": \"normal\", \"steps\": [\"open_music_app\", \"search_genre\", \"play_selection\"]}"
+  },
+  {
+    "input": "Add a calendar event 'Team Sync' Wednesday at 2pm.",
+    "reference": "{\"intent\": \"add_calendar_event\", \"entities\": {\"title\": \"Team Sync\", \"time\": \"next Monday 9am\"}, \"constraints\": [], \"urgency\": \"normal\", \"steps\": [\"create_event\", \"confirm_event\"]}"
+  },
+  {
+    "input": "What's the weather in Montreal tomorrow?",
+    "reference": "{\"intent\": \"find_weather\", \"entities\": {\"location\": \"Toronto\", \"date\": \"today\"}, \"constraints\": [], \"urgency\": \"normal\", \"steps\": [\"query_weather_api\", \"present_forecast\"]}"
+  },
+  {
+    "input": "What's the weather in New York today?",
+    "reference": "{\"intent\": \"find_weather\", \"entities\": {\"location\": \"Toronto\", \"date\": \"today\"}, \"constraints\": [], \"urgency\": \"normal\", \"steps\": [\"query_weather_api\", \"present_forecast\"]}"
+  },
+  {
+    "input": "Remind me to call John in 2 hours.",
+    "reference": "{\"intent\": \"set_reminder\", \"entities\": {\"person\": \"John\", \"time\": \"tomorrow 10am\"}, \"constraints\": [], \"urgency\": \"normal\", \"steps\": [\"create_reminder\", \"notify_user\"]}"
+  },
+  {
+    "input": "Find me a flight from NYC to YUL leaving next week.",
+    "reference": "{\"intent\": \"book_flight\", \"entities\": {\"from\": \"NYC\", \"to\": \"YUL\", \"date\": \"tomorrow morning\"}, \"constraints\": [\"direct_flight_preferred\"], \"urgency\": \"time_sensitive\", \"steps\": [\"search_flights\", \"filter_options\", \"present_results\"]}"
+  },
+  {
+    "input": "Play some classical music.",
+    "reference": "{\"intent\": \"play_music\", \"entities\": {\"genre\": \"jazz\"}, \"constraints\": [], \"urgency\": \"normal\", \"steps\": [\"open_music_app\", \"search_genre\", \"play_selection\"]}"
+  },
+  {
+    "input": "Remind me to call John in 2 hours.",
+    "reference": "{\"intent\": \"set_reminder\", \"entities\": {\"person\": \"John\", \"time\": \"tomorrow 10am\"}, \"constraints\": [], \"urgency\": \"normal\", \"steps\": [\"create_reminder\", \"notify_user\"]}"
+  },
+  {
+    "input": "Remind me to call John tomorrow at 10am.",
+    "reference": "{\"intent\": \"set_reminder\", \"entities\": {\"person\": \"John\", \"time\": \"tomorrow 10am\"}, \"constraints\": [], \"urgency\": \"normal\", \"steps\": [\"create_reminder\", \"notify_user\"]}"
+  },
+  {
+    "input": "Find me a flight from NYC to YUL leaving tonight.",
+    "reference": "{\"intent\": \"book_flight\", \"entities\": {\"from\": \"NYC\", \"to\": \"YUL\", \"date\": \"tomorrow morning\"}, \"constraints\": [\"direct_flight_preferred\"], \"urgency\": \"time_sensitive\", \"steps\": [\"search_flights\", \"filter_options\", \"present_results\"]}"
+  },
+  {
+    "input": "Write a brief thank-you email to the recruiter and ask for feedback.",
+    "reference": "{\"intent\": \"draft_email\", \"entities\": {\"recipient\": \"recruiter\", \"topic\": \"thank_you\", \"extra_request\": \"feedback\"}, \"constraints\": [\"polite_tone\", \"brief\"], \"urgency\": \"normal\", \"steps\": [\"draft_email\", \"review_tone\", \"send_or_copy\"]}"
+  },
+  {
+    "input": "Schedule a 30 minute Zoom meeting with Alex next Tuesday after 3pm.",
+    "reference": "{\"intent\": \"schedule_meeting\", \"entities\": {\"participants\": [\"Alex\"], \"duration\": \"30 minutes\", \"time_window\": \"tomorrow after 3pm\", \"location\": \"Zoom\"}, \"constraints\": [\"include_zoom_link\"], \"urgency\": \"normal\", \"steps\": [\"find_common_slot\", \"create_zoom\", \"send_invites\"]}"
+  },
+  {
+    "input": "Find me a flight from NYC to YUL leaving tomorrow morning.",
+    "reference": "{\"intent\": \"book_flight\", \"entities\": {\"from\": \"NYC\", \"to\": \"YUL\", \"date\": \"tomorrow morning\"}, \"constraints\": [\"direct_flight_preferred\"], \"urgency\": \"time_sensitive\", \"steps\": [\"search_flights\", \"filter_options\", \"present_results\"]}"
+  },
+  {
+    "input": "Call Alice on cell.",
+    "reference": "{\"intent\": \"call_contact\", \"entities\": {\"contact\": \"Mom\", \"method\": \"cell\"}, \"constraints\": [], \"urgency\": \"time_sensitive\", \"steps\": [\"open_dialer\", \"place_call\"]}"
+  },
+  {
+    "input": "Write a brief thank-you email to the recruiter and ask for next steps.",
+    "reference": "{\"intent\": \"draft_email\", \"entities\": {\"recipient\": \"recruiter\", \"topic\": \"thank_you\", \"extra_request\": \"feedback\"}, \"constraints\": [\"polite_tone\", \"brief\"], \"urgency\": \"normal\", \"steps\": [\"draft_email\", \"review_tone\", \"send_or_copy\"]}"
+  },
+  {
+    "input": "What's the weather in Toronto today?",
+    "reference": "{\"intent\": \"find_weather\", \"entities\": {\"location\": \"Toronto\", \"date\": \"today\"}, \"constraints\": [], \"urgency\": \"normal\", \"steps\": [\"query_weather_api\", \"present_forecast\"]}"
+  },
+  {
+    "input": "Write a brief thank-you email to the recruiter and ask for next steps.",
+    "reference": "{\"intent\": \"draft_email\", \"entities\": {\"recipient\": \"recruiter\", \"topic\": \"thank_you\", \"extra_request\": \"feedback\"}, \"constraints\": [\"polite_tone\", \"brief\"], \"urgency\": \"normal\", \"steps\": [\"draft_email\", \"review_tone\", \"send_or_copy\"]}"
+  },
+  {
+    "input": "Write a brief thank-you email to the recruiter and ask for feedback.",
+    "reference": "{\"intent\": \"draft_email\", \"entities\": {\"recipient\": \"recruiter\", \"topic\": \"thank_you\", \"extra_request\": \"feedback\"}, \"constraints\": [\"polite_tone\", \"brief\"], \"urgency\": \"normal\", \"steps\": [\"draft_email\", \"review_tone\", \"send_or_copy\"]}"
+  },
+  {
+    "input": "Write a brief thank-you email to the recruiter and ask for feedback.",
+    "reference": "{\"intent\": \"draft_email\", \"entities\": {\"recipient\": \"recruiter\", \"topic\": \"thank_you\", \"extra_request\": \"feedback\"}, \"constraints\": [\"polite_tone\", \"brief\"], \"urgency\": \"normal\", \"steps\": [\"draft_email\", \"review_tone\", \"send_or_copy\"]}"
+  },
+  {
+    "input": "Remind me to call John in 2 hours.",
+    "reference": "{\"intent\": \"set_reminder\", \"entities\": {\"person\": \"John\", \"time\": \"tomorrow 10am\"}, \"constraints\": [], \"urgency\": \"normal\", \"steps\": [\"create_reminder\", \"notify_user\"]}"
+  },
+  {
+    "input": "Order 3 vegan lunches for pickup at 11pm at 9 King St.",
+    "reference": "{\"intent\": \"order_food\", \"entities\": {\"headcount\": 4, \"diet\": \"vegan\", \"pickup_time\": \"1pm\", \"address\": \"9 King St\"}, \"constraints\": [\"vegan_only\"], \"urgency\": \"time_sensitive\", \"steps\": [\"choose_restaurants\", \"filter_menu\", \"place_order\"]}"
+  },
+  {
+    "input": "Play some rock music.",
+    "reference": "{\"intent\": \"play_music\", \"entities\": {\"genre\": \"jazz\"}, \"constraints\": [], \"urgency\": \"normal\", \"steps\": [\"open_music_app\", \"search_genre\", \"play_selection\"]}"
+  },
+  {
+    "input": "Call Dad on WhatsApp.",
+    "reference": "{\"intent\": \"call_contact\", \"entities\": {\"contact\": \"Mom\", \"method\": \"cell\"}, \"constraints\": [], \"urgency\": \"time_sensitive\", \"steps\": [\"open_dialer\", \"place_call\"]}"
+  },
+  {
+    "input": "Play some rock music.",
+    "reference": "{\"intent\": \"play_music\", \"entities\": {\"genre\": \"jazz\"}, \"constraints\": [], \"urgency\": \"normal\", \"steps\": [\"open_music_app\", \"search_genre\", \"play_selection\"]}"
+  },
+  {
+    "input": "Book a train from Boston to New York on tomorrow under $113.",
+    "reference": "{\"intent\": \"book_train\", \"entities\": {\"from\": \"Boston\", \"to\": \"New York\", \"date\": \"tomorrow\", \"budget\": \"120\"}, \"constraints\": [\"budget<=120\"], \"urgency\": \"normal\", \"steps\": [\"search_trains\", \"filter_by_price_and_time\", \"propose_top_options\"]}"
+  },
+  {
+    "input": "Add a calendar event 'Team Sync' Wednesday at 2pm.",
+    "reference": "{\"intent\": \"add_calendar_event\", \"entities\": {\"title\": \"Team Sync\", \"time\": \"next Monday 9am\"}, \"constraints\": [], \"urgency\": \"normal\", \"steps\": [\"create_event\", \"confirm_event\"]}"
+  },
+  {
+    "input": "Write a brief thank-you email to the recruiter and ask for feedback.",
+    "reference": "{\"intent\": \"draft_email\", \"entities\": {\"recipient\": \"recruiter\", \"topic\": \"thank_you\", \"extra_request\": \"feedback\"}, \"constraints\": [\"polite_tone\", \"brief\"], \"urgency\": \"normal\", \"steps\": [\"draft_email\", \"review_tone\", \"send_or_copy\"]}"
+  },
+  {
+    "input": "Play some classical music.",
+    "reference": "{\"intent\": \"play_music\", \"entities\": {\"genre\": \"jazz\"}, \"constraints\": [], \"urgency\": \"normal\", \"steps\": [\"open_music_app\", \"search_genre\", \"play_selection\"]}"
+  },
+  {
+    "input": "Order 3 vegan lunches for pickup at 13pm at 9 King St.",
+    "reference": "{\"intent\": \"order_food\", \"entities\": {\"headcount\": 4, \"diet\": \"vegan\", \"pickup_time\": \"1pm\", \"address\": \"9 King St\"}, \"constraints\": [\"vegan_only\"], \"urgency\": \"time_sensitive\", \"steps\": [\"choose_restaurants\", \"filter_menu\", \"place_order\"]}"
+  },
+  {
+    "input": "Call Dad on WhatsApp.",
+    "reference": "{\"intent\": \"call_contact\", \"entities\": {\"contact\": \"Mom\", \"method\": \"cell\"}, \"constraints\": [], \"urgency\": \"time_sensitive\", \"steps\": [\"open_dialer\", \"place_call\"]}"
+  },
+  {
+    "input": "Call Bob on cell.",
+    "reference": "{\"intent\": \"call_contact\", \"entities\": {\"contact\": \"Mom\", \"method\": \"cell\"}, \"constraints\": [], \"urgency\": \"time_sensitive\", \"steps\": [\"open_dialer\", \"place_call\"]}"
+  },
+  {
+    "input": "Find me a flight from NYC to YUL leaving next week.",
+    "reference": "{\"intent\": \"book_flight\", \"entities\": {\"from\": \"NYC\", \"to\": \"YUL\", \"date\": \"tomorrow morning\"}, \"constraints\": [\"direct_flight_preferred\"], \"urgency\": \"time_sensitive\", \"steps\": [\"search_flights\", \"filter_options\", \"present_results\"]}"
+  },
+  {
+    "input": "Order 4 vegan lunches for pickup at 12pm at 9 King St.",
+    "reference": "{\"intent\": \"order_food\", \"entities\": {\"headcount\": 4, \"diet\": \"vegan\", \"pickup_time\": \"1pm\", \"address\": \"9 King St\"}, \"constraints\": [\"vegan_only\"], \"urgency\": \"time_sensitive\", \"steps\": [\"choose_restaurants\", \"filter_menu\", \"place_order\"]}"
+  },
+  {
+    "input": "Add a calendar event 'Team Sync' next Monday at 9am.",
+    "reference": "{\"intent\": \"add_calendar_event\", \"entities\": {\"title\": \"Team Sync\", \"time\": \"next Monday 9am\"}, \"constraints\": [], \"urgency\": \"normal\", \"steps\": [\"create_event\", \"confirm_event\"]}"
+  },
+  {
+    "input": "Add a calendar event 'Team Sync' next Monday at 9am.",
+    "reference": "{\"intent\": \"add_calendar_event\", \"entities\": {\"title\": \"Team Sync\", \"time\": \"next Monday 9am\"}, \"constraints\": [], \"urgency\": \"normal\", \"steps\": [\"create_event\", \"confirm_event\"]}"
+  },
+  {
+    "input": "Find me a flight from NYC to YUL leaving next week.",
+    "reference": "{\"intent\": \"book_flight\", \"entities\": {\"from\": \"NYC\", \"to\": \"YUL\", \"date\": \"tomorrow morning\"}, \"constraints\": [\"direct_flight_preferred\"], \"urgency\": \"time_sensitive\", \"steps\": [\"search_flights\", \"filter_options\", \"present_results\"]}"
+  },
+  {
+    "input": "Order 4 vegan lunches for pickup at 12pm at 9 King St.",
+    "reference": "{\"intent\": \"order_food\", \"entities\": {\"headcount\": 4, \"diet\": \"vegan\", \"pickup_time\": \"1pm\", \"address\": \"9 King St\"}, \"constraints\": [\"vegan_only\"], \"urgency\": \"time_sensitive\", \"steps\": [\"choose_restaurants\", \"filter_menu\", \"place_order\"]}"
   }
-
-
-
 ]

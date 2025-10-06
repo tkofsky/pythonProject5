@@ -7,8 +7,8 @@ from openai import OpenAI
 # ========= CONFIG =========
 DATA_PATH = "agent_dataset_50.json"
 PROMPTS_PATH = "prompt_variants.json"
-CSV_LOG = "bandit_fewshot_agent_log_two_pass.csv"
-#CSV_LOG = "bandit_fewshot_agent_log"
+#CSV_LOG = "bandit_fewshot_agent_log_two_pass.csv"
+CSV_LOG = "bandit_fewshot_agent_log"
 
 ITERATIONS = 30
 EPSILON = 0.25
@@ -120,6 +120,10 @@ def tokens(v):
     if isinstance(v,dict):
         bag=[]; [bag.extend(str(k).lower().split()+str(val).lower().split()) for k,val in v.items()]; return set(bag)
     return set(str(v).lower().split())
+
+
+
+
 
 def f1(a,b):
     if not a and not b: return 1.0

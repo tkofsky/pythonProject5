@@ -18,7 +18,7 @@ import seaborn as sns
 # ================= Settings =================
 LOG_PATH = "bandit_fewshot_agent_log_two_pass.csv"  # fixed (two-pass only)
 TOPN = 6                    # max arms to plot
-WINDOW = 25                 # rolling window for moving average
+WINDOW = 5                 # rolling window for moving average
 EMA_WEIGHT = 0.90           # exponential smoother weight (higher = smoother)
 MIN_PULLS = 5               # min pulls per arm to be included
 NUM_BINS = 12               # for binned pulls plot

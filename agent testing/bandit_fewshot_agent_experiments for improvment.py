@@ -19,6 +19,7 @@ from openai import OpenAI
 DATA_PATH = "agent_dataset.json"           # eval dataset: [{"input":..., "reference": <json or str>}]
 PROMPTS_PATH = "prompt_variants.json"      # prompt templates (id, template, category, intent)
 CSV_LOG = "bandit_fewshot_agent_log_experiments.csv"
+CSV_LOG ="bandit_fewshot_agent_log_router_hybrid_steps_weighted.csv"
 
 ITERATIONS = 80
 

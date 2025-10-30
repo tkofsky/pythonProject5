@@ -1,7 +1,177 @@
 [
-  {"input":"Book a flight from Toronto to Vancouver next Friday evening. I prefer direct and under $600.","reference":"{\"intent\":\"book_flight\",\"entities\":{\"from\":\"Toronto\",\"to\":\"Vancouver\",\"date\":\"next Friday evening\",\"budget\":\"600\",\"stops\":\"direct\"},\"constraints\":[\"budget<=600\",\"direct_only\"],\"urgency\":\"normal\",\"steps\":[\"search_flights\",\"filter_by_price_and_nonstop\",\"propose_top_options\"]}"},
-  {"input":"Summarize this 30-page PDF and extract 5 action items by tomorrow morning.","reference":"{\"intent\":\"summarize_and_extract_actions\",\"entities\":{\"doc_type\":\"pdf\",\"length\":\"30 pages\",\"deadline\":\"tomorrow morning\",\"actions\":5},\"constraints\":[\"return_bullet_points\",\"concise_summary\"],\"urgency\":\"time_sensitive\",\"steps\":[\"ingest_document\",\"summarize\",\"extract_actions\",\"format_bullets\"]}"},
-  {"input":"Set up a 45-minute meeting with Priya and Chen this Thursday after 2pm. Add a Zoom link.","reference":"{\"intent\":\"schedule_meeting\",\"entities\":{\"participants\":[\"Priya\",\"Chen\"],\"duration\":\"45 minutes\",\"time_window\":\"Thursday after 2pm\",\"location\":\"Zoom\"},\"constraints\":[\"include_zoom_link\"],\"urgency\":\"normal\",\"steps\":[\"find_common_slot\",\"create_zoom\",\"send_invites\"]}"},
-  {"input":"Order lunch for 8 people, vegetarian friendly, delivery between 12:15–12:45 to 123 King St.","reference":"{\"intent\":\"order_food\",\"entities\":{\"headcount\":8,\"diet\":\"vegetarian\",\"delivery_window\":\"12:15-12:45\",\"address\":\"123 King St\"},\"constraints\":[\"vegetarian_options\"],\"urgency\":\"time_sensitive\",\"steps\":[\"choose_caterers\",\"filter_menu\",\"schedule_delivery\"]}"},
-  {"input":"Draft a polite follow-up email to the recruiter about my interview last week and ask about next steps.","reference":"{\"intent\":\"draft_email\",\"entities\":{\"recipient\":\"recruiter\",\"topic\":\"interview_follow_up\",\"time_ref\":\"last week\"},\"constraints\":[\"polite_tone\",\"ask_next_steps\"],\"urgency\":\"normal\",\"steps\":[\"draft_email\",\"review_tone\",\"send_or_copy\"]}"}
+  {
+    "input": "Book a train from Boston to New York tomorrow morning under $120.",
+    "reference": {
+      "intent": "book_train",
+      "entities": {
+        "from": "Boston",
+        "to": "New York",
+        "date": "tomorrow morning",
+        "budget": "120"
+      },
+      "constraints": [
+        "budget<=120"
+      ],
+      "urgency": "normal",
+      "steps": [
+        "search trains",
+        "filter by price",
+        "choose best departure",
+        "book ticket",
+        "send confirmation"
+      ]
+    }
+  },
+  {
+    "input": "Schedule a 30 minute Zoom check-in with Maya next Tuesday after 3pm.",
+    "reference": {
+      "intent": "schedule_meeting",
+      "entities": {
+        "participants": [
+          "Maya"
+        ],
+        "duration": "30 minutes",
+        "time_window": "next Tuesday after 3pm",
+        "location": "Zoom"
+      },
+      "constraints": [
+        "include_zoom_link",
+        "after 3pm"
+      ],
+      "urgency": "normal",
+      "steps": [
+        "find common time",
+        "create Zoom link",
+        "send invite"
+      ]
+    }
+  },
+  {
+    "input": "Order 4 vegan lunches for pickup at 1pm at 9 King St.",
+    "reference": {
+      "intent": "order_food",
+      "entities": {
+        "headcount": 4,
+        "diet": "vegan",
+        "pickup_time": "1pm",
+        "address": "9 King St"
+      },
+      "constraints": [
+        "vegan_only"
+      ],
+      "urgency": "time_sensitive",
+      "steps": [
+        "choose restaurant",
+        "filter vegan options",
+        "place order",
+        "confirm pickup"
+      ]
+    }
+  },
+  {
+    "input": "Arrange a meeting with the design team tomorrow at 10am in room 402.",
+    "reference": {
+      "intent": "schedule_meeting",
+      "entities": {
+        "team": "design team",
+        "date": "tomorrow",
+        "time": "10am",
+        "location": "room 402"
+      },
+      "constraints": [
+        "in-person"
+      ],
+      "urgency": "normal",
+      "steps": [
+        "check availability",
+        "book room",
+        "send invites"
+      ]
+    }
+  },
+  {
+    "input": "Book a hotel room in Toronto for three nights under $400 total.",
+    "reference": {
+      "intent": "book_hotel",
+      "entities": {
+        "city": "Toronto",
+        "duration": "three nights",
+        "budget": "400"
+      },
+      "constraints": [
+        "budget<=400"
+      ],
+      "urgency": "normal",
+      "steps": [
+        "search hotels in Toronto",
+        "filter by price",
+        "select best option",
+        "book room"
+      ]
+    }
+  },
+  {
+    "input": "Send a follow-up email to Alex about the quarterly report by Friday.",
+    "reference": {
+      "intent": "send_email",
+      "entities": {
+        "recipient": "Alex",
+        "subject": "quarterly report",
+        "deadline": "Friday"
+      },
+      "constraints": [
+        "before Friday"
+      ],
+      "urgency": "time_sensitive",
+      "steps": [
+        "draft email",
+        "review content",
+        "send email"
+      ]
+    }
+  },
+  {
+    "input": "Reserve a table for 6 at a vegan restaurant in Montreal for 8pm tonight.",
+    "reference": {
+      "intent": "book_restaurant",
+      "entities": {
+        "city": "Montreal",
+        "time": "8pm",
+        "party_size": 6,
+        "diet": "vegan"
+      },
+      "constraints": [
+        "vegan_only"
+      ],
+      "urgency": "time_sensitive",
+      "steps": [
+        "search vegan restaurants",
+        "filter by availability",
+        "book table",
+        "send confirmation"
+      ]
+    }
+  },
+  {
+    "input": "Order office supplies including pens and notebooks under $200 budget.",
+    "reference": {
+      "intent": "order_supplies",
+      "entities": {
+        "items": [
+          "pens",
+          "notebooks"
+        ],
+        "budget": "200"
+      },
+      "constraints": [
+        "budget<=200"
+      ],
+      "urgency": "low",
+      "steps": [
+        "search supplies",
+        "filter by budget",
+        "place order"
+      ]
+    }
+  }
 ]

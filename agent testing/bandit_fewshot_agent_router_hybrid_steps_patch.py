@@ -64,6 +64,13 @@ with open(DATA_PATH, "r", encoding="utf-8") as f:
 with open(PROMPTS_PATH, "r", encoding="utf-8") as f:
     PROMPT_VARIANTS_FILE = json.load(f)
 
+ #--- Normalize dataset: ensure 'reference' is always a JSON string ---
+for d in DATASET:
+    ref = d.get("reference")
+    if isinstance(ref, dict):
+        # convert dict to a proper JSON string
+        d["reference"] = json.dumps(ref, ensure_ascii=False)
+
 # ========= TYPES =========
 @dataclass
 class Arm:
